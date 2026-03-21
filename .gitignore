@@ -1,0 +1,49 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+#------------------ Angular----------------------------
+# Compiled output
+/angular-bible/dist
+/angular-bible/dist/tmp
+/angular-bible/out-tsc
+/angular-bible/bazel-out
+
+# Node
+/angular-bible/node_modules
+/angular-bible/npm-debug.log
+/angular-bible/yarn-error.log
+
+# IDEs and editors
+/angular-bible/.idea/
+/angular-bible/.project
+/angular-bible/.classpath
+/angular-bible/.c9/
+/angular-bible/*.launch
+/angular-bible/.settings/
+/angular-bible/*.sublime-workspace
+
+# Visual Studio Code
+/angular-bible/.vscode/*
+/angular-bible/.vscode/!settings.json
+/angular-bible/.vscode/!tasks.json
+/angular-bible/.vscode/!launch.json
+/angular-bible/.vscode/!extensions.json
+/angular-bible/.vscode/!mcp.json
+/angular-bible/.history/*
+
+# Miscellaneous
+/angular-bible/.angular/cache
+/angular-bible/.sass-cache/
+/angular-bible/connect.lock
+/angular-bible/coverage
+/angular-bible/libpeerconnection.log
+/angular-bible/testem.log
+/angular-bible/typings
+/angular-bible/__screenshots__/
+
+# System files
+/angular-bible/.DS_Store
+/angular-bible/Thumbs.db
+
+
+#------------------ API ----------------------------
+/api-bible/node_modules
