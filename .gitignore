@@ -47,3 +47,4 @@
 
 #------------------ API ----------------------------
 /api-bible/node_modules
+/api-bible/.env
