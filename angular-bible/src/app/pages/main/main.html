@@ -1,0 +1,15 @@
+<header></header>
+
+<aside>
+  <app-sidebar></app-sidebar>
+</aside>
+<main>
+  <div>
+    @for (verse of verses(); track $index) {
+      <span class="text-green-950 bg-white px-0.5 mx-1 text-sm rounded-xs font-bold">{{ verse.verse }}</span>
+      <span class="text-lg">{{ verse.text }}</span>
+    }
+  </div>
+</main>
+
+<footer></footer>

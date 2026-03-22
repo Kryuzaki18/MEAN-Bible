@@ -1,0 +1,16 @@
+<p-drawer
+  styleClass="overflow-hidden"
+  header="Books"
+  [(visible)]="isSidebarVisible"
+  [blockScroll]="true"
+>
+  <div class="flex flex-col gap-2 text-left">
+    @for (book of books(); track $index) {
+      <p-button styleClass="flex justify-between py-3" variant="text" [routerLink]="['/home']" [queryParams]="{ book: book.name, chapter: 1 }">
+        <span class="pi pi-book"></span>
+        <span>{{ book.name }}</span>
+        <span class="pi pi-chevron-right"></span>
+      </p-button>
+    }
+  </div>
+</p-drawer>
