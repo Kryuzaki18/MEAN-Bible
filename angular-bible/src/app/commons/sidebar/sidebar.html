@@ -1,16 +1,22 @@
 <p-drawer
-  styleClass="overflow-hidden"
+  #drawerRef
+  styleClass="!w-70"
   header="Books"
   [(visible)]="isSidebarVisible"
   [blockScroll]="true"
+  (onHide)="onDrawerClose()"
 >
-  <div class="flex flex-col gap-2 text-left">
+  <div class="flex flex-col text-left">
     @for (book of books(); track $index) {
-      <p-button styleClass="flex justify-between py-3" variant="text" [routerLink]="['/home']" [queryParams]="{ book: book.name, chapter: 1 }">
+      <div
+        class="flex items-center gap-3 p-1 w-full cursor-pointer"
+        [class.bg-gray-800]="book.name === activeBook"
+        [class.text-emerald-500]="book.name === activeBook"
+        (click)="navigateToBook(book.name)"
+      >
         <span class="pi pi-book"></span>
-        <span>{{ book.name }}</span>
-        <span class="pi pi-chevron-right"></span>
-      </p-button>
+        <span class="book-name">{{ book.name }}</span>
+      </div>
     }
   </div>
 </p-drawer>

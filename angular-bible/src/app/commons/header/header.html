@@ -1,1 +1,16 @@
-<p>header works!</p>
+<header class="flex items-center justify-center-safe">
+  <div class="container">
+    <p-menubar [model]="items">
+      <ng-template #start> </ng-template>
+      <ng-template #item let-item let-root="root">
+        <a pRipple class="flex items-center px-4 py-2 cursor-pointer gap-2">
+          <span class="{{ item.icon }}"></span>
+          <span>{{ item.label }}</span>
+        </a>
+      </ng-template>
+      <ng-template #end>
+        <input type="text" pInputText placeholder="Global Search" class="w-50" />
+      </ng-template>
+    </p-menubar>
+  </div>
+</header>

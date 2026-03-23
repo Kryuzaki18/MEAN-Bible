@@ -1,440 +1,507 @@
 export const booksData = [
-  // ===================== OLD TESTAMENT =====================
-
   {
     name: "Genesis",
     abbreviation: "Gen",
     testament: "Old",
     order: 1,
+    chapters: 50,
+    verses: 1533,
     description:
-      "Genesis is the foundational book of the Bible, describing the creation of the world, the origin of humanity, the fall of man, the flood in Noah’s time, and the establishment of God’s covenant with the patriarchs Abraham, Isaac, Jacob, and Joseph. It introduces key theological themes such as sin, promise, covenant, and God’s sovereignty in history.",
+      "Genesis explains the origins of the universe, humanity, sin, and God's covenant plan. It begins with creation, the fall of man, the flood in Noah’s time, and the Tower of Babel. It then follows the patriarchs Abraham, Isaac, Jacob, and Joseph, showing how God establishes His covenant people and works through generations to fulfill His promises.",
   },
+
   {
     name: "Exodus",
-    abbreviation: "Exod",
+    abbreviation: "Exo",
     testament: "Old",
     order: 2,
+    chapters: 40,
+    verses: 1213,
     description:
-      "Exodus recounts Israel’s deliverance from slavery in Egypt under Moses, including the ten plagues, the Passover, and the crossing of the Red Sea. It also records the giving of the Ten Commandments, the establishment of the covenant at Mount Sinai, and the instructions for building the tabernacle where God dwells among His people.",
+      "Exodus tells how God delivers Israel from slavery in Egypt through Moses. It includes the ten plagues, the Passover, and the crossing of the Red Sea. It continues with Israel’s journey in the wilderness, God's provision of manna and water, and the giving of the Ten Commandments at Mount Sinai, along with laws and instructions for worship and the tabernacle.",
   },
+
   {
     name: "Leviticus",
     abbreviation: "Lev",
     testament: "Old",
     order: 3,
+    chapters: 27,
+    verses: 859,
     description:
-      "Leviticus provides detailed laws concerning worship, sacrifice, purity, and holiness. It emphasizes the holiness of God and the need for His people to be set apart. It outlines the sacrificial system, priestly duties, and ethical conduct required to maintain a proper relationship with God.",
+      "Leviticus focuses on holiness, worship, and proper relationship with God. It provides detailed instructions for sacrifices, offerings, priestly duties, ceremonial cleanliness, and moral conduct. The central theme is that God is holy, and His people must also live holy lives set apart for Him.",
   },
+
   {
     name: "Numbers",
     abbreviation: "Num",
     testament: "Old",
     order: 4,
+    chapters: 36,
+    verses: 1288,
     description:
-      "Numbers chronicles Israel’s journey through the wilderness, including two censuses, organization of the tribes, and multiple instances of rebellion and divine judgment. It demonstrates God’s faithfulness despite Israel’s repeated unbelief and disobedience.",
+      "Numbers records Israel’s wilderness journey toward the Promised Land. It includes censuses of the tribes, organization of the camp, and repeated cycles of rebellion and consequences. Despite human failure, God continues to guide, provide, and remain faithful to His people.",
   },
+
   {
     name: "Deuteronomy",
-    abbreviation: "Deut",
+    abbreviation: "Deu",
     testament: "Old",
     order: 5,
+    chapters: 34,
+    verses: 959,
     description:
-      "Deuteronomy contains Moses’ final speeches to Israel before entering the Promised Land. It restates the Law, calls for covenant loyalty, and emphasizes obedience, love for God, and remembrance of His works. It includes blessings for obedience and curses for disobedience.",
+      "Deuteronomy contains Moses’ final speeches to Israel, reviewing the Law and urging obedience before entering the Promised Land. It emphasizes love for God, covenant faithfulness, and the blessings of obedience versus the consequences of disobedience.",
   },
 
   {
     name: "Joshua",
-    abbreviation: "Josh",
+    abbreviation: "Jos",
     testament: "Old",
     order: 6,
+    chapters: 24,
+    verses: 658,
     description:
-      "Joshua describes the conquest and division of the Promised Land under Joshua’s leadership. It highlights God’s faithfulness in fulfilling His promises and the importance of obedience in securing victory and inheritance.",
+      "Joshua describes the conquest and division of the Promised Land under Joshua’s leadership. It shows God fulfilling His promises to Israel, including the crossing of the Jordan River, military victories, and the allocation of land to the tribes.",
   },
+
   {
     name: "Judges",
-    abbreviation: "Judg",
+    abbreviation: "Jdg",
     testament: "Old",
     order: 7,
+    chapters: 21,
+    verses: 618,
     description:
-      "Judges records a repeated cycle of Israel’s sin, oppression by enemies, repentance, and deliverance by judges. It illustrates the consequences of disobedience and the need for righteous leadership in Israel.",
+      "Judges covers a period of instability in Israel after Joshua’s death. The people repeatedly fall into sin, face oppression, cry out to God, and are delivered by judges. This cycle highlights Israel’s need for righteous leadership and obedience to God.",
   },
+
   {
     name: "Ruth",
-    abbreviation: "Ruth",
+    abbreviation: "Rut",
     testament: "Old",
     order: 8,
+    chapters: 4,
+    verses: 85,
     description:
-      "Ruth is a narrative of loyalty, faithfulness, and redemption. It tells the story of Ruth, a Moabite woman who remains devoted to Naomi and becomes part of the lineage of King David, demonstrating God’s providence and inclusion.",
+      "Ruth is a story of loyalty, faith, and redemption. It follows Ruth, a Moabite woman who remains faithful to Naomi, and Boaz, her kinsman-redeemer. The story demonstrates God's providence and redemption and connects to the lineage of King David and Jesus Christ.",
   },
+
   {
     name: "1 Samuel",
-    abbreviation: "1 Sam",
+    abbreviation: "1Sa",
     testament: "Old",
     order: 9,
+    chapters: 31,
+    verses: 810,
     description:
-      "1 Samuel covers the transition from the period of judges to the monarchy. It introduces Samuel, the reign of Saul, and the rise of David, emphasizing obedience to God over ritual sacrifice.",
+      "1 Samuel describes the transition from judges to monarchy in Israel. It introduces Samuel, the anointing of Saul as the first king, and the rise of David. It highlights Saul’s disobedience and David’s preparation to become king.",
   },
+
   {
     name: "2 Samuel",
-    abbreviation: "2 Sam",
+    abbreviation: "2Sa",
     testament: "Old",
     order: 10,
+    chapters: 24,
+    verses: 695,
     description:
-      "2 Samuel focuses on King David’s reign, including his military successes, establishment of Jerusalem, God’s covenant with David, and the consequences of his moral failures within his household.",
+      "2 Samuel focuses on King David’s reign over Israel. It records his successes, failures, and the consequences of his sins, including the Bathsheba incident. Despite his flaws, David remains central to God's covenant promises.",
   },
+
   {
     name: "1 Kings",
-    abbreviation: "1 Kgs",
+    abbreviation: "1Ki",
     testament: "Old",
     order: 11,
+    chapters: 22,
+    verses: 816,
     description:
-      "1 Kings describes Solomon’s reign, the building of the temple, and the division of the kingdom into Israel and Judah. It also introduces prophetic ministries during periods of increasing idolatry.",
+      "1 Kings covers Solomon’s reign, the building of the temple, and the division of the kingdom into Israel and Judah. It also documents the rise of prophets and the spiritual decline of the nations.",
   },
+
   {
     name: "2 Kings",
-    abbreviation: "2 Kgs",
+    abbreviation: "2Ki",
     testament: "Old",
     order: 12,
+    chapters: 25,
+    verses: 719,
     description:
-      "2 Kings records the decline and eventual exile of Israel and Judah due to persistent unfaithfulness. It highlights prophetic warnings and the consequences of turning away from God.",
+      "2 Kings continues the history of Israel and Judah, focusing on their decline due to idolatry and disobedience. It ends with the fall of Samaria and Jerusalem and the exile of the people.",
   },
+
   {
     name: "1 Chronicles",
-    abbreviation: "1 Chr",
+    abbreviation: "1Ch",
     testament: "Old",
     order: 13,
+    chapters: 29,
+    verses: 942,
     description:
-      "1 Chronicles provides genealogies and a record of David’s reign with a focus on worship and the temple. It emphasizes God’s covenant with David and the spiritual heritage of Israel.",
+      "1 Chronicles retells Israel’s history with emphasis on genealogies and David’s reign. It highlights worship, the temple, and God's covenant with David.",
   },
+
   {
     name: "2 Chronicles",
-    abbreviation: "2 Chr",
+    abbreviation: "2Ch",
     testament: "Old",
     order: 14,
+    chapters: 36,
+    verses: 822,
     description:
-      "2 Chronicles continues the history of Judah’s kings, focusing on the temple, worship, and spiritual obedience. It concludes with the fall of Jerusalem and exile.",
+      "2 Chronicles focuses on the kings of Judah and the temple in Jerusalem. It emphasizes spiritual reform, obedience, and the consequences of turning away from God.",
   },
+
   {
     name: "Ezra",
-    abbreviation: "Ezra",
+    abbreviation: "Ezr",
     testament: "Old",
     order: 15,
+    chapters: 10,
+    verses: 280,
     description:
-      "Ezra describes the return of exiles from Babylon and the rebuilding of the temple. It emphasizes spiritual renewal, obedience to the Law, and restoration of proper worship.",
+      "Ezra describes the return of the Jewish exiles from Babylon and the rebuilding of the temple. It emphasizes restoring worship and obedience to God's law.",
   },
+
   {
     name: "Nehemiah",
     abbreviation: "Neh",
     testament: "Old",
     order: 16,
+    chapters: 13,
+    verses: 406,
     description:
-      "Nehemiah recounts the rebuilding of Jerusalem’s walls and reforms to restore the community’s faithfulness to God. It highlights leadership, prayer, and perseverance.",
+      "Nehemiah records the rebuilding of Jerusalem’s walls and the restoration of the community. It highlights leadership, prayer, and spiritual renewal.",
   },
+
   {
     name: "Esther",
-    abbreviation: "Esth",
+    abbreviation: "Est",
     testament: "Old",
     order: 17,
+    chapters: 10,
+    verses: 167,
     description:
-      "Esther tells how a Jewish woman becomes queen of Persia and helps save her people from destruction. It demonstrates God’s providence and protection in hidden ways.",
+      "Esther tells how God preserved the Jewish people through Queen Esther and Mordecai during a plot to destroy them in Persia.",
   },
+
   {
     name: "Job",
     abbreviation: "Job",
     testament: "Old",
     order: 18,
+    chapters: 42,
+    verses: 1070,
     description:
-      "Job explores suffering and faith through the story of a righteous man who endures great trials. It emphasizes trust in God’s wisdom beyond human understanding.",
+      "Job explores suffering, faith, and God's sovereignty. It tells the story of a righteous man who endures trials and learns deeper trust in God.",
   },
+
   {
     name: "Psalms",
-    abbreviation: "Ps",
+    abbreviation: "Psa",
     testament: "Old",
     order: 19,
+    chapters: 150,
+    verses: 2461,
     description:
-      "Psalms is a collection of poetic songs and prayers expressing worship, lament, thanksgiving, and praise. It reflects deep devotion and reliance on God.",
+      "Psalms is a collection of songs and prayers expressing worship, praise, lament, and thanksgiving to God in various life situations.",
   },
+
   {
     name: "Proverbs",
-    abbreviation: "Prov",
+    abbreviation: "Pro",
     testament: "Old",
     order: 20,
+    chapters: 31,
+    verses: 915,
     description:
-      "Proverbs contains practical wisdom for daily living, focusing on righteousness, discipline, and the fear of the Lord as the foundation of wisdom.",
+      "Proverbs provides practical wisdom for daily living, teaching righteousness, discipline, and the fear of the Lord as the foundation of wisdom.",
   },
+
   {
     name: "Ecclesiastes",
-    abbreviation: "Eccl",
+    abbreviation: "Ecc",
     testament: "Old",
     order: 21,
+    chapters: 12,
+    verses: 222,
     description:
-      "Ecclesiastes reflects on the meaning of life and the emptiness of worldly pursuits apart from God. It concludes that true purpose is found in fearing God and obeying Him.",
+      "Ecclesiastes reflects on the meaning of life and the futility of worldly pursuits apart from God, emphasizing the importance of fearing God and keeping His commandments.",
   },
+
   {
     name: "Song of Solomon",
-    abbreviation: "Song",
+    abbreviation: "Son",
     testament: "Old",
     order: 22,
+    chapters: 8,
+    verses: 117,
     description:
-      "Song of Solomon is a poetic celebration of love and marriage, often interpreted as an allegory of God’s love for His people, highlighting intimacy and commitment.",
+      "Song of Solomon is a poetic celebration of love and marriage, often seen as symbolic of the relationship between Christ and His people.",
   },
+
   {
     name: "Isaiah",
     abbreviation: "Isa",
     testament: "Old",
     order: 23,
+    chapters: 66,
+    verses: 1292,
     description:
-      "Isaiah contains prophecies of judgment and salvation, including detailed messianic prophecies. It emphasizes God’s holiness, justice, and plan for redemption.",
+      "Isaiah contains prophecies of judgment and salvation, including detailed messianic prophecies about the coming Savior, His suffering, and restoration of God's people.",
   },
+
   {
     name: "Jeremiah",
     abbreviation: "Jer",
     testament: "Old",
     order: 24,
+    chapters: 52,
+    verses: 1364,
     description:
-      "Jeremiah warns Judah of impending judgment due to unfaithfulness while also offering hope through promises of a new covenant and restoration.",
+      "Jeremiah warns Judah of coming judgment due to sin and calls the people to repentance while also offering hope for restoration.",
   },
+
   {
     name: "Lamentations",
     abbreviation: "Lam",
     testament: "Old",
     order: 25,
+    chapters: 5,
+    verses: 154,
     description:
-      "Lamentations expresses grief over Jerusalem’s destruction and reflects on the consequences of sin while affirming God’s mercy and faithfulness.",
+      "Lamentations expresses sorrow over the destruction of Jerusalem, reflecting grief, repentance, and hope in God's mercy.",
   },
+
   {
     name: "Ezekiel",
-    abbreviation: "Ezek",
+    abbreviation: "Eze",
     testament: "Old",
     order: 26,
+    chapters: 48,
+    verses: 1273,
     description:
-      "Ezekiel contains prophetic visions during the exile, emphasizing God’s glory, judgment, and promises of restoration for Israel.",
+      "Ezekiel contains visions and prophecies given during the Babylonian exile, emphasizing God's judgment, restoration, and glory.",
   },
+
   {
     name: "Daniel",
     abbreviation: "Dan",
     testament: "Old",
     order: 27,
+    chapters: 12,
+    verses: 357,
     description:
-      "Daniel includes narratives and prophetic visions about faithfulness in exile and God’s sovereignty over earthly kingdoms and future events.",
+      "Daniel tells stories of faithfulness in exile and includes prophetic visions about future kingdoms and God's ultimate reign.",
   },
 
-  // ===================== NEW TESTAMENT =====================
+  {
+    name: "Hosea",
+    abbreviation: "Hos",
+    testament: "Old",
+    order: 28,
+    chapters: 14,
+    verses: 197,
+    description:
+      "Hosea uses the metaphor of marriage to illustrate Israel’s unfaithfulness to God and His enduring love and mercy.",
+  },
+
+  {
+    name: "Joel",
+    abbreviation: "Joe",
+    testament: "Old",
+    order: 29,
+    chapters: 3,
+    verses: 73,
+    description:
+      "Joel prophesies about the Day of the Lord, calling for repentance and foretelling the outpouring of God's Spirit.",
+  },
+
+  {
+    name: "Amos",
+    abbreviation: "Amo",
+    testament: "Old",
+    order: 30,
+    chapters: 9,
+    verses: 146,
+    description:
+      "Amos calls Israel to justice and righteousness, warning of judgment due to social injustice and idolatry.",
+  },
+
+  {
+    name: "Obadiah",
+    abbreviation: "Oba",
+    testament: "Old",
+    order: 31,
+    chapters: 1,
+    verses: 21,
+    description:
+      "Obadiah pronounces judgment against Edom for its pride and actions against Israel.",
+  },
+
+  {
+    name: "Jonah",
+    abbreviation: "Jon",
+    testament: "Old",
+    order: 32,
+    chapters: 4,
+    verses: 48,
+    description:
+      "Jonah tells of the prophet’s mission to Nineveh and highlights God's mercy toward repentant people.",
+  },
+
+  {
+    name: "Micah",
+    abbreviation: "Mic",
+    testament: "Old",
+    order: 33,
+    chapters: 7,
+    verses: 105,
+    description:
+      "Micah warns of judgment while pointing to a future ruler from Bethlehem and restoration of God's people.",
+  },
+
+  {
+    name: "Nahum",
+    abbreviation: "Nah",
+    testament: "Old",
+    order: 34,
+    chapters: 3,
+    verses: 47,
+    description:
+      "Nahum prophesies the fall of Nineveh, emphasizing God's justice against wicked nations.",
+  },
+
+  {
+    name: "Habakkuk",
+    abbreviation: "Hab",
+    testament: "Old",
+    order: 35,
+    chapters: 3,
+    verses: 56,
+    description:
+      "Habakkuk questions God’s justice but ultimately affirms faith and trust in God's sovereignty.",
+  },
+
+  {
+    name: "Zephaniah",
+    abbreviation: "Zep",
+    testament: "Old",
+    order: 36,
+    chapters: 3,
+    verses: 53,
+    description:
+      "Zephaniah warns of the coming Day of the Lord and calls for repentance and humility.",
+  },
+
+  {
+    name: "Haggai",
+    abbreviation: "Hag",
+    testament: "Old",
+    order: 37,
+    chapters: 2,
+    verses: 38,
+    description:
+      "Haggai encourages the rebuilding of the temple after exile and calls for prioritizing God’s house.",
+  },
+
+  {
+    name: "Zechariah",
+    abbreviation: "Zec",
+    testament: "Old",
+    order: 38,
+    chapters: 14,
+    verses: 211,
+    description:
+      "Zechariah contains visions encouraging restoration and includes messianic prophecies pointing to future hope.",
+  },
+
+  {
+    name: "Malachi",
+    abbreviation: "Mal",
+    testament: "Old",
+    order: 39,
+    chapters: 4,
+    verses: 55,
+    description:
+      "Malachi addresses spiritual decline and calls for repentance while foretelling the coming messenger of the Lord.",
+  },
 
   {
     name: "Matthew",
-    abbreviation: "Matt",
+    abbreviation: "Mat",
     testament: "New",
     order: 40,
+    chapters: 28,
+    verses: 1071,
     description:
-      "Matthew presents the life, teachings, death, and resurrection of Jesus Christ, emphasizing Him as the promised Messiah and fulfillment of Old Testament prophecy.",
+      "Matthew presents Jesus as the Messiah and King, emphasizing the fulfillment of Old Testament prophecy, His teachings, miracles, death, and resurrection.",
   },
+
   {
     name: "Mark",
-    abbreviation: "Mark",
+    abbreviation: "Mar",
     testament: "New",
     order: 41,
+    chapters: 16,
+    verses: 678,
     description:
-      "Mark provides a concise and fast-paced account of Jesus’ ministry, focusing on His actions, miracles, and authority as the Son of God.",
+      "Mark focuses on the actions and miracles of Jesus, portraying Him as the suffering servant and Son of God.",
   },
+
   {
     name: "Luke",
-    abbreviation: "Luke",
+    abbreviation: "Luk",
     testament: "New",
     order: 42,
+    chapters: 24,
+    verses: 1151,
     description:
-      "Luke offers a detailed and orderly account of Jesus’ life, emphasizing compassion, inclusivity, and salvation for all people.",
+      "Luke provides a detailed account of Jesus' life, emphasizing compassion, salvation, and inclusion of all people.",
   },
+
   {
     name: "John",
-    abbreviation: "John",
+    abbreviation: "Joh",
     testament: "New",
     order: 43,
+    chapters: 21,
+    verses: 879,
     description:
-      "John highlights the divinity of Jesus Christ, presenting His identity as the Son of God through theological teachings, signs, and discourses.",
+      "John emphasizes the divinity of Christ, presenting Him as the Son of God and focusing on belief for eternal life.",
   },
+
   {
     name: "Acts",
-    abbreviation: "Acts",
+    abbreviation: "Act",
     testament: "New",
     order: 44,
+    chapters: 28,
+    verses: 1007,
     description:
-      "Acts describes the birth and growth of the early church, the work of the Holy Spirit, and the spread of the gospel through the apostles, especially Paul.",
+      "Acts records the early church’s growth and the spread of the gospel through the apostles empowered by the Holy Spirit.",
   },
+
   {
     name: "Romans",
     abbreviation: "Rom",
     testament: "New",
     order: 45,
+    chapters: 16,
+    verses: 433,
     description:
-      "Romans explains the doctrine of salvation by grace through faith, addressing sin, righteousness, and the role of faith in justification.",
+      "Romans explains salvation by grace through faith and outlines foundational Christian doctrine.",
   },
-  {
-    name: "1 Corinthians",
-    abbreviation: "1 Cor",
-    testament: "New",
-    order: 46,
-    description:
-      "1 Corinthians addresses issues in the church at Corinth, including divisions, immorality, spiritual gifts, and the importance of love and order in worship.",
-  },
-  {
-    name: "2 Corinthians",
-    abbreviation: "2 Cor",
-    testament: "New",
-    order: 47,
-    description:
-      "2 Corinthians emphasizes Paul’s ministry, suffering, and the comfort found in Christ, while defending his apostolic authority.",
-  },
-  {
-    name: "Galatians",
-    abbreviation: "Gal",
-    testament: "New",
-    order: 48,
-    description:
-      "Galatians defends the gospel of grace and teaches that justification comes through faith in Christ rather than adherence to the law.",
-  },
-  {
-    name: "Ephesians",
-    abbreviation: "Eph",
-    testament: "New",
-    order: 49,
-    description:
-      "Ephesians explores spiritual blessings in Christ, unity in the church, and practical instructions for Christian living.",
-  },
-  {
-    name: "Philippians",
-    abbreviation: "Phil",
-    testament: "New",
-    order: 50,
-    description:
-      "Philippians is a letter of encouragement emphasizing joy, humility, and contentment in Christ despite circumstances.",
-  },
-  {
-    name: "Colossians",
-    abbreviation: "Col",
-    testament: "New",
-    order: 51,
-    description:
-      "Colossians emphasizes the supremacy and sufficiency of Christ over all creation and warns against false teachings.",
-  },
-  {
-    name: "1 Thessalonians",
-    abbreviation: "1 Thess",
-    testament: "New",
-    order: 52,
-    description:
-      "1 Thessalonians encourages believers in faith and holiness while teaching about the return of Christ.",
-  },
-  {
-    name: "2 Thessalonians",
-    abbreviation: "2 Thess",
-    testament: "New",
-    order: 53,
-    description:
-      "2 Thessalonians clarifies teachings about Christ’s return and encourages perseverance amid persecution.",
-  },
-  {
-    name: "1 Timothy",
-    abbreviation: "1 Tim",
-    testament: "New",
-    order: 54,
-    description:
-      "1 Timothy provides instructions for church leadership, sound doctrine, and orderly conduct in the church.",
-  },
-  {
-    name: "2 Timothy",
-    abbreviation: "2 Tim",
-    testament: "New",
-    order: 55,
-    description:
-      "2 Timothy is Paul’s final letter, urging Timothy to remain faithful, endure hardship, and continue preaching the gospel.",
-  },
-  {
-    name: "Titus",
-    abbreviation: "Titus",
-    testament: "New",
-    order: 56,
-    description:
-      "Titus offers guidance on appointing church leaders and promoting sound teaching and good works within the church.",
-  },
-  {
-    name: "Philemon",
-    abbreviation: "Phlm",
-    testament: "New",
-    order: 57,
-    description:
-      "Philemon is a personal letter about forgiveness and reconciliation between Philemon and his runaway servant Onesimus.",
-  },
-  {
-    name: "Hebrews",
-    abbreviation: "Heb",
-    testament: "New",
-    order: 58,
-    description:
-      "Hebrews presents Jesus Christ as the ultimate high priest and perfect sacrifice, superior to the Old Testament system.",
-  },
-  {
-    name: "James",
-    abbreviation: "Jas",
-    testament: "New",
-    order: 59,
-    description:
-      "James emphasizes practical Christian living, teaching that genuine faith is demonstrated through good works and obedience.",
-  },
-  {
-    name: "1 Peter",
-    abbreviation: "1 Pet",
-    testament: "New",
-    order: 60,
-    description:
-      "1 Peter encourages believers facing suffering to remain steadfast in faith, highlighting hope and holiness in Christ.",
-  },
-  {
-    name: "2 Peter",
-    abbreviation: "2 Pet",
-    testament: "New",
-    order: 61,
-    description:
-      "2 Peter warns against false teachers and reminds believers of the certainty of Christ’s return and God’s judgment.",
-  },
-  {
-    name: "1 John",
-    abbreviation: "1 Jn",
-    testament: "New",
-    order: 62,
-    description:
-      "1 John assures believers of salvation and emphasizes walking in truth, love, and fellowship with God.",
-  },
-  {
-    name: "2 John",
-    abbreviation: "2 Jn",
-    testament: "New",
-    order: 63,
-    description:
-      "2 John warns against deceivers and stresses the importance of abiding in the truth and love of Christ.",
-  },
-  {
-    name: "3 John",
-    abbreviation: "3 Jn",
-    testament: "New",
-    order: 64,
-    description:
-      "3 John commends faithful believers and encourages support for those who serve in truth.",
-  },
-  {
-    name: "Jude",
-    abbreviation: "Jude",
-    testament: "New",
-    order: 65,
-    description:
-      "Jude warns against false teachers and urges believers to contend for the faith and remain faithful to the truth.",
-  },
+
   {
     name: "Revelation",
     abbreviation: "Rev",
     testament: "New",
     order: 66,
+    chapters: 22,
+    verses: 404,
     description:
-      "Revelation contains apocalyptic visions describing the end times, the final victory of Christ, judgment, and the establishment of a new heaven and new earth.",
+      "Revelation reveals prophetic visions about the end times, final judgment, defeat of evil, and the establishment of a new heaven and new earth where God reigns forever.",
   },
 ];

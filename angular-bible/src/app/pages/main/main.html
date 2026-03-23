@@ -1,15 +1,93 @@
-<header></header>
+<app-header></app-header>
+<app-sidebar></app-sidebar>
+<main class="flex items-center justify-center-safe">
+  <div class="container flex flex-col gap-2">
+    <h1 class="text-center text-2xl text-emerald-500 font-bold mt-2">
+      <span
+        class="pi pi-question-circle cursor-pointer"
+        (click)="op.toggle($event)"
+        pTooltip="What is this book about?"
+        tooltipPosition="bottom"
+      ></span>
+      Book of {{ book() }} Chapter {{ currentChapter() }}
+    </h1>
+    <p-popover #op [dismissable]="true">
+      <div class="book-details">
+        {{ bookDetails().description }}
+      </div>
+    </p-popover>
 
-<aside>
-  <app-sidebar></app-sidebar>
-</aside>
-<main>
-  <div>
-    @for (verse of verses(); track $index) {
-      <span class="text-green-950 bg-white px-0.5 mx-1 text-sm rounded-xs font-bold">{{ verse.verse }}</span>
-      <span class="text-lg">{{ verse.text }}</span>
-    }
+    <div class="flex items-center justify-between px-2">
+      <p-button styleClass="flex items-center justify-center py-3" [disabled]="isFirstChapter()">
+        <span class="pi pi-chevron-left"></span>
+        <span>Previous Chapter</span>
+      </p-button>
+
+      <!-- <p-select [options]="chapter" [(ngModel)]="selectedChapter" optionLabel="name" placeholder="Select a Chapter" class="w-full md:6" /> -->
+      <input type="text" pInputText placeholder="Search keyword..." class="w-100" />
+
+      <p-button styleClass="flex items-center justify-center py-3">
+        <span>Next Chapter</span>
+        <span class="pi pi-chevron-right"></span>
+      </p-button>
+    </div>
+    <div class="px-2">
+      <p-scrollpanel class="verses-scrollpanel">
+        @for (verse of verses(); track $index) {
+          <div class="flex items-start">
+            <div
+              class="flex items-center justify-center text-center bg-white px-1 mr-2 mt-1.5 rounded-xs"
+            >
+              <span class="text-emerald-800 text-xs font-bold" #targetElement>
+                {{ verse.verse }}
+              </span>
+            </div>
+            <div
+              [class.bookmark-verses]="isBookmarked(verse)"
+              [class.selected-verse]="selectedVerse()?.verse === verse.verse"
+              (click)="openPopoverVerseAction($event, verse, targetElement)"
+            >
+              <span class="text-lg">{{ verse.text }}</span>
+            </div>
+          </div>
+        }
+
+        <p-popover #popoverVerse [dismissable]="true">
+          @if (selectedVerse()) {
+            <div class="flex gap-1">
+              <button
+                class="cursor-pointer text-xs border px-5 py-2 rounded text-emerald-500"
+                (click)="copyVerse(); popoverVerse.hide()"
+              >
+                📋 Copy
+              </button>
+              @if (isBookmarked(selectedVerse())) {
+                <button
+                  class="cursor-pointer text-xs border px-5 py-2 rounded text-red-500"
+                  (click)="removeBookmark(); popoverVerse.hide()"
+                >
+                  ❌ Remove
+                </button>
+              } @else {
+                <button
+                  class="cursor-pointer text-xs border px-5 py-2 rounded text-emerald-500"
+                  (click)="addBookmark(); popoverVerse.hide()"
+                >
+                  🔖 Bookmark
+                </button>
+              }
+            </div>
+          }
+        </p-popover>
+
+        <p-scrolltop
+          target="parent"
+          [threshold]="100"
+          icon="pi pi-arrow-up"
+          [buttonProps]="{ severity: 'contrast', raised: true, rounded: true }"
+        />
+      </p-scrollpanel>
+    </div>
   </div>
 </main>
-
 <footer></footer>

@@ -1,4 +1,3 @@
-import { getChapter } from './../../../../../api-bible/src/controllers/bibleController';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, shareReplay, catchError, throwError } from 'rxjs';

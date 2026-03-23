@@ -1,8 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
-@import "primeicons/primeicons.css";
-@import "tailwindcss";
+@use 'primeicons/primeicons.css';
+@use 'tailwindcss';
 
-html, body {
+html,
+body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;

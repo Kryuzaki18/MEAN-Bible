@@ -3,4 +3,7 @@ export interface Book {
   abbreviation: string;
   testament: string;
   order: number;
+  chapters: number;
+  verses: number;
+  description: string;
 }
