@@ -6,7 +6,7 @@
 
   @for (bookmark of bookmarks(); track $index) {
     <p-card class="p-0 m-0 bg-gray-100">
-      <div class="text-sm underline">
+      <div class="text-sm underline cursor-pointer" (click)="navigateBookmark(bookmark)">
         "Book of <span class="text-emerald-600 font-bold">{{ bookmark.book }}</span
         >" Chapter
         <span class="text-emerald-600 font-bold">{{ bookmark.chapter }}</span>
@@ -26,12 +26,21 @@
         </div>
 
         <div class="w-100 flex justify-end">
-          <button
-            class="cursor-pointer text-xs border px-5 py-2 rounded text-red-500"
-            (click)="removeBookmark(bookmark)"
-          >
-            ❌ Remove
-          </button>
+          <div class="flex flex-col gap-2">
+            <button
+              class="cursor-pointer text-xs border px-5 py-2 rounded text-emerald-500"
+              (click)="copyVerse(bookmark)"
+            >
+              📋 Copy
+            </button>
+
+            <button
+              class="cursor-pointer text-xs border px-5 py-2 rounded text-red-500"
+              (click)="removeBookmark(bookmark)"
+            >
+              ❌ Remove
+            </button>
+          </div>
         </div>
       </div>
     </p-card>

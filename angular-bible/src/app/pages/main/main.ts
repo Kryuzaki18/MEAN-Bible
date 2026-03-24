@@ -1,11 +1,24 @@
-import { Component, computed, DestroyRef, effect, inject, signal, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Common Components
 import { Sidebar } from '../../commons/sidebar/sidebar';
 import { Header } from '../../commons/header/header';
+
+// Pipes
+import { HighlightPipe } from '../../shared/pipes/highlight.pipes';
 
 // Interfaces
 import { Verse } from '../../shared/interfaces/verse';
@@ -28,11 +41,19 @@ import { ScrollTopModule } from 'primeng/scrolltop';
 import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { Popover } from 'primeng/popover';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+
+interface IChapter {
+  label: string;
+  chapter: number;
+}
 
 @Component({
   selector: 'app-main',
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     Header,
     Sidebar,
     InputTextModule,
@@ -42,41 +63,66 @@ import { Popover } from 'primeng/popover';
     ScrollTopModule,
     PopoverModule,
     TooltipModule,
+    HighlightPipe,
+    InputGroupModule,
+    InputGroupAddonModule,
   ],
   templateUrl: './main.html',
   styleUrl: './main.scss',
   standalone: true,
 })
-export class Main {
+export class Main implements OnInit {
   @ViewChild('popoverVerse') popoverVerse!: Popover;
+  route = inject(ActivatedRoute);
 
+  searchControl = new FormControl('');
+
+  chapters = signal<IChapter[]>([]);
+  selectedChapter = signal<number>(1);
+  initialVerses: Verse[] = [];
   verses = signal<Verse[]>([]);
   bookDetails = signal<Book>({} as Book);
   selectedVerse = signal<Verse | null>(null);
-  route = inject(ActivatedRoute);
   queryParams = toSignal(this.route.queryParamMap);
 
   book = computed(() => this.queryParams()?.get('book') ?? 'Genesis');
-  currentChapter = computed(() => Number(this.queryParams()?.get('chapter')) ?? 1);
-  isFirstChapter = computed(() => this.currentChapter() === 1);
+  isFirstChapter = computed(() => this.selectedChapter() === 1);
+  isLastChapter = computed(() => this.selectedChapter() === this.chapters().length);
 
   private destroyRef = inject(DestroyRef);
 
   constructor(
+    private router: Router,
     private bibleService: BibleService,
     private localStorageService: LocalStorageService,
     private bookmarkService: BookmarkService,
   ) {
     effect(() => {
-      if (this.book() && this.currentChapter()) {
-        this.getChapter(this.book(), this.currentChapter());
-        this.getBookDetails(this.book());
-        this.selectedVerse.set(null);
+      if (this.selectedChapter() > this.bookDetails().chapters) {
+        this.selectedChapter.set(this.bookDetails().chapters);
       }
+
+      this.getChapter(this.book(), this.selectedChapter());
+      this.getBookDetails(this.book());
+      this.selectedVerse.set(null);
     });
   }
 
-  openPopoverVerseAction(event: MouseEvent, verse: Verse, target: HTMLElement) {
+  ngOnInit(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const chapter = params.get('chapter') ? parseInt(params.get('chapter')!, 10) : 1;
+      this.selectedChapter.set(isNaN(chapter) ? 1 : chapter);
+      this.clearSearch();
+    });
+
+    this.searchControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.onSearch(value ?? '');
+      });
+  }
+
+  openPopoverVerseAction(event: MouseEvent, verse: Verse, target: HTMLElement): void {
     this.selectedVerse.set(verse);
     this.popoverVerse.show(event, target);
     this.popoverVerse.hide();
@@ -100,7 +146,7 @@ export class Main {
   }
 
   addBookmark(): void {
-   this.bookmarkService.addBookmark(this.selectedVerse());
+    this.bookmarkService.addBookmark(this.selectedVerse());
   }
 
   removeBookmark(): void {
@@ -121,12 +167,53 @@ export class Main {
         });
     }
   }
- 
+
+  clearSearch(): void {
+    this.searchControl.setValue('');
+  }
+
+  previousChapter(): void {
+    if (!this.isFirstChapter()) {
+      this.clearSearch();
+      this.selectedChapter.update((chapter) => chapter - 1);
+      this.selectChapter(this.selectedChapter());
+    }
+  }
+
+  nextChapter(): void {
+    const chaptersCount = this.chapters().length;
+    if (this.selectedChapter() < chaptersCount) {
+      this.clearSearch();
+      this.selectedChapter.update((chapter) => chapter + 1);
+      this.selectChapter(this.selectedChapter());
+    }
+  }
+
+  selectChapter(chapter: number): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { chapter },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  private onSearch(query: string): void {
+    const searchQuery = query.trim().toLowerCase();
+    const data = this.verses().filter((verse) => verse.text.toLowerCase().includes(searchQuery));
+    if (searchQuery.length <= 1 || data.length === 0) {
+      this.verses.set(this.initialVerses);
+      return;
+    }
+    this.verses.set(data);
+  }
+
   private getChapter(book: string, chapter: number): void {
     this.bibleService
       .getChapter(book, chapter)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data: any) => {
+        this.initialVerses = data;
         this.verses.set(data);
       });
   }
@@ -140,6 +227,13 @@ export class Main {
           const foundBook = data.find((b) => b.name === book);
           if (foundBook) {
             this.bookDetails.set(foundBook);
+
+            this.chapters.set(
+              Array.from({ length: foundBook.chapters }, (_, i) => ({
+                chapter: i + 1,
+                label: `Chapter ${i + 1}`,
+              })),
+            );
           } else {
             console.warn(`Book "${book}" not found in the list.`);
           }

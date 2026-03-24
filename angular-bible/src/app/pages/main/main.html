@@ -9,7 +9,7 @@
         pTooltip="What is this book about?"
         tooltipPosition="bottom"
       ></span>
-      Book of {{ book() }} Chapter {{ currentChapter() }}
+      Book of {{ book() }} Chapter {{ selectedChapter() }}
     </h1>
     <p-popover #op [dismissable]="true">
       <div class="book-details">
@@ -18,15 +18,50 @@
     </p-popover>
 
     <div class="flex items-center justify-between px-2">
-      <p-button styleClass="flex items-center justify-center py-3" [disabled]="isFirstChapter()">
+      <p-button
+        styleClass="flex items-center justify-center py-3"
+        [disabled]="isFirstChapter()"
+        (click)="previousChapter()"
+      >
         <span class="pi pi-chevron-left"></span>
         <span>Previous Chapter</span>
       </p-button>
 
-      <!-- <p-select [options]="chapter" [(ngModel)]="selectedChapter" optionLabel="name" placeholder="Select a Chapter" class="w-full md:6" /> -->
-      <input type="text" pInputText placeholder="Search keyword..." class="w-100" />
+      <div class="flex items-center justify-center gap-2">
+        <p-select
+          [options]="chapters()"
+          [(ngModel)]="selectedChapter"
+          optionLabel="label"
+          optionValue="chapter"
+          placeholder="Select a Chapter"
+          class="w-50"
+          (ngModelChange)="selectChapter($event)"
+        />
 
-      <p-button styleClass="flex items-center justify-center py-3">
+        <div class="inline-flex gap-2">
+          <p-inputgroup>
+            <input
+              inputId="search"
+              type="text"
+              pInputText
+              placeholder="Search keyword..."
+              class="w-80"
+              [formControl]="searchControl"
+            />
+            <p-inputgroup-addon>
+              <button type="button" pButton (click)="clearSearch()" text severity="danger">
+                <i class="pi pi-times" pButtonIcon></i>
+              </button>
+            </p-inputgroup-addon>
+          </p-inputgroup>
+        </div>
+      </div>
+
+      <p-button
+        styleClass="flex items-center justify-center py-3"
+        [disabled]="isLastChapter()"
+        (click)="nextChapter()"
+      >
         <span>Next Chapter</span>
         <span class="pi pi-chevron-right"></span>
       </p-button>
@@ -47,7 +82,15 @@
               [class.selected-verse]="selectedVerse()?.verse === verse.verse"
               (click)="openPopoverVerseAction($event, verse, targetElement)"
             >
-              <span class="text-lg">{{ verse.text }}</span>
+              <span class="text-lg">
+                @for (part of verse.text | highlight: searchControl.value; track $index) {
+                  @if (part.match) {
+                    <mark class="highlight">{{ part.text }}</mark>
+                  } @else {
+                    {{ part.text }}
+                  }
+                }
+              </span>
             </div>
           </div>
         }

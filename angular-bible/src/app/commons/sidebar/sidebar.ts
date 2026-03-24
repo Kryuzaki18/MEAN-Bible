@@ -39,8 +39,7 @@ export class Sidebar implements OnInit {
 
   ngOnInit(): void {
     this.loadBooks();
-
-    this.route.queryParamMap.subscribe((params) => {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const book = params.get('book') || 'Genesis';
       this.activeBook = book;
     });

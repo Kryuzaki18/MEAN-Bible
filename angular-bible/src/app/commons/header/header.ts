@@ -15,6 +15,7 @@ import { AppSettingsService } from '../../shared/services/app-settings.service';
 // Dialogs
 import { Bookmarks } from '../../shared/dialog/bookmarks/bookmarks';
 
+
 @Component({
   selector: 'app-header',
   imports: [AvatarModule, BadgeModule, MenubarModule, InputTextModule, RippleModule],
