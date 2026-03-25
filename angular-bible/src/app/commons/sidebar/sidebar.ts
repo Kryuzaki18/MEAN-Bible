@@ -38,7 +38,7 @@ export class Sidebar implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadBooks();
+    this.fetchBooks();
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const book = params.get('book') || 'Genesis';
       this.activeBook = book;
@@ -54,7 +54,7 @@ export class Sidebar implements OnInit {
     this.onDrawerClose();
   }
 
-  private loadBooks(): void {
+  private fetchBooks(): void {
     this.bibleService
       .getBooks()
       .pipe(takeUntilDestroyed(this.destroyRef))

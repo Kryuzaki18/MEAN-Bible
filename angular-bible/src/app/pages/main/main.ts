@@ -108,11 +108,40 @@ export class Main implements OnInit {
     private toastService: ToastService,
   ) {
     effect(() => {
-      this.getAllBooks();
+      const bookName = this.book();
+      const allBooks = this.allBooks();
+      const selectedChapter = this.selectedChapter();
+
+      const foundBook = allBooks.find((b) => b.name === bookName);
+
+      if (!foundBook) return;
+
+      this.bookDetails.set(foundBook);
+
+      const totalChapters = foundBook.chapters;
+      this.chapters.set(
+        Array.from({ length: totalChapters }, (_, i) => ({
+          chapter: i + 1,
+          label: `Chapter ${i + 1}`,
+        })),
+      );
+
+      const safeChapter = Math.min(selectedChapter, totalChapters);
+      if (safeChapter !== selectedChapter) {
+        this.selectedChapter.set(safeChapter);
+      }
+
+      this.selectedVerse.set({} as Verse);
+
+      if (bookName && safeChapter) {
+        this.getAllVersesByChapter(bookName, safeChapter);
+      }
     });
   }
 
   ngOnInit(): void {
+    this.fetchBooks();
+
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const raw = parseInt(params.get('chapter') ?? '1', 10);
       this.selectedChapter.set(isNaN(raw) || raw < 1 ? 1 : raw);
@@ -220,33 +249,13 @@ export class Main implements OnInit {
       });
   }
 
-  private getAllBooks(): void {
+  private fetchBooks(): void {
     this.bibleService
       .getBooks()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
           this.allBooks.set(data);
-
-          const foundBook = this.allBooks().find((b) => b.name === this.book());
-          if (foundBook) {
-            this.bookDetails.set(foundBook);
-
-            this.chapters.set(
-              Array.from({ length: foundBook.chapters }, (_, i) => ({
-                chapter: i + 1,
-                label: `Chapter ${i + 1}`,
-              })),
-            );
-          }
-
-          if (this.selectedChapter() > this.bookDetails().chapters) {
-            this.selectedChapter.set(this.bookDetails().chapters);
-          }
-
-          this.selectedVerse.set({} as Verse);
-
-          this.getAllVersesByChapter(this.book(), this.selectedChapter());
         },
         error: (err) => console.error(err.message),
       });
