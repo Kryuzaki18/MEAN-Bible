@@ -8,6 +8,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -24,13 +25,10 @@ import { HighlightPipe } from '../../shared/pipes/highlight.pipes';
 import { Verse } from '../../shared/interfaces/verse';
 import { Book } from '../../shared/interfaces/book';
 
-// Constants
-import { LocalStorageKeys } from '../../shared/constants/local-storage.constant';
-
 // Services
 import { BibleService } from '../../shared/services/bible.service';
-import { LocalStorageService } from '../../shared/services/local-storage.service';
 import { BookmarkService } from '../../shared/services/bookmark.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 // PrimeNG Modules
 import { InputTextModule } from 'primeng/inputtext';
@@ -52,6 +50,7 @@ interface IChapter {
 @Component({
   selector: 'app-main',
   imports: [
+    NgClass,
     FormsModule,
     ReactiveFormsModule,
     Header,
@@ -72,20 +71,31 @@ interface IChapter {
   standalone: true,
 })
 export class Main implements OnInit {
-  @ViewChild('popoverVerse') popoverVerse!: Popover;
+  @ViewChild('popoverVerseActions') popoverVerseActions!: Popover;
   route = inject(ActivatedRoute);
 
   searchControl = new FormControl('');
 
+  defaultBook: string = 'Genesis';
+
+  allBooks = signal<Book[]>([]);
   chapters = signal<IChapter[]>([]);
   selectedChapter = signal<number>(1);
   initialVerses: Verse[] = [];
   verses = signal<Verse[]>([]);
   bookDetails = signal<Book>({} as Book);
-  selectedVerse = signal<Verse | null>(null);
+  selectedVerse = signal<Verse>({} as Verse);
   queryParams = toSignal(this.route.queryParamMap);
 
-  book = computed(() => this.queryParams()?.get('book') ?? 'Genesis');
+  book = computed(() => {
+    const newBook = this.queryParams()?.get('book');
+    const bookFound = this.allBooks().find((b) => b.name.toLowerCase() === newBook?.toLowerCase());
+    if (!newBook || !bookFound) {
+      return this.defaultBook;
+    }
+
+    return bookFound.name;
+  });
   isFirstChapter = computed(() => this.selectedChapter() === 1);
   isLastChapter = computed(() => this.selectedChapter() === this.chapters().length);
 
@@ -94,17 +104,32 @@ export class Main implements OnInit {
   constructor(
     private router: Router,
     private bibleService: BibleService,
-    private localStorageService: LocalStorageService,
     private bookmarkService: BookmarkService,
+    private toastService: ToastService,
   ) {
     effect(() => {
+      this.getAllBooks();
+
+      const foundBook = this.allBooks().find((b) => b.name === this.book());
+      if (foundBook) {
+        this.bookDetails.set(foundBook);
+
+        this.chapters.set(
+          Array.from({ length: foundBook.chapters }, (_, i) => ({
+            chapter: i + 1,
+            label: `Chapter ${i + 1}`,
+          })),
+        );
+      } else {
+        console.warn(`Book "${this.book()}" not found in the list.`);
+      }
+
       if (this.selectedChapter() > this.bookDetails().chapters) {
         this.selectedChapter.set(this.bookDetails().chapters);
       }
 
-      this.getChapter(this.book(), this.selectedChapter());
-      this.getBookDetails(this.book());
-      this.selectedVerse.set(null);
+      this.getAllVersesByChapter(this.book(), this.selectedChapter());
+      this.selectedVerse.set({} as Verse);
     });
   }
 
@@ -122,35 +147,30 @@ export class Main implements OnInit {
       });
   }
 
-  openPopoverVerseAction(event: MouseEvent, verse: Verse, target: HTMLElement): void {
+  openPopoverVerseActions(event: MouseEvent, verse: Verse, target: HTMLElement): void {
     this.selectedVerse.set(verse);
-    this.popoverVerse.show(event, target);
-    this.popoverVerse.hide();
+    this.popoverVerseActions.show(event, target);
+    this.popoverVerseActions.hide();
     setTimeout(() => {
-      this.popoverVerse.show(event, target);
+      this.popoverVerseActions.show(event, target);
     });
   }
 
-  isBookmarked(verse: Verse | null): boolean {
-    if (!verse) {
-      return false;
-    }
-    const exists = this.localStorageService.getLocalStorageItem<any[]>(
-      LocalStorageKeys.BOOKMARKS,
-      [],
-    );
-    return exists.some(
-      (item) =>
-        item.book === verse.book && item.chapter === verse.chapter && item.verse === verse.verse,
-    );
+  isBookmarked(verse: Verse): boolean {
+    return !!this.bookmarkService
+      .getAllBookmarks()
+      .find(
+        (item) =>
+          item.book === verse.book && item.chapter === verse.chapter && item.verse === verse.verse,
+      );
   }
 
   addBookmark(): void {
     this.bookmarkService.addBookmark(this.selectedVerse());
   }
 
-  removeBookmark(): void {
-    this.bookmarkService.removeBookmark(this.selectedVerse());
+  removeBookmarked(): void {
+    this.bookmarkService.removeBookmarked(this.selectedVerse());
   }
 
   copyVerse(): void {
@@ -160,7 +180,10 @@ export class Main implements OnInit {
       navigator.clipboard
         .writeText(verseText)
         .then(() => {
-          console.log('Verse copied to clipboard:', verseText);
+          this.toastService.info(
+            `${verse.book} ${verse.chapter}:${verse.verse}`,
+            `has been copied to clipboard.`,
+          );
         })
         .catch((err) => {
           console.error('Failed to copy verse:', err);
@@ -208,7 +231,7 @@ export class Main implements OnInit {
     this.verses.set(data);
   }
 
-  private getChapter(book: string, chapter: number): void {
+  private getAllVersesByChapter(book: string, chapter: number): void {
     this.bibleService
       .getChapter(book, chapter)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -218,25 +241,13 @@ export class Main implements OnInit {
       });
   }
 
-  private getBookDetails(book: string): void {
+  private getAllBooks(): void {
     this.bibleService
       .getBooks()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data) => {
-          const foundBook = data.find((b) => b.name === book);
-          if (foundBook) {
-            this.bookDetails.set(foundBook);
-
-            this.chapters.set(
-              Array.from({ length: foundBook.chapters }, (_, i) => ({
-                chapter: i + 1,
-                label: `Chapter ${i + 1}`,
-              })),
-            );
-          } else {
-            console.warn(`Book "${book}" not found in the list.`);
-          }
+          this.allBooks.set(data);
         },
         error: (err) => console.error(err.message),
       });

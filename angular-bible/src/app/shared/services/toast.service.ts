@@ -1,43 +1,37 @@
-import { Injectable, signal, Type } from '@angular/core';
-
-enum EToastTypes {
-  Success = 'success',
-  Error = 'error',
-  Info = 'info',
-  Warn = 'warn',
-  Secondary = 'secondary',
-  Contrast = 'contrast'
-}
-
-type TToastType = keyof typeof EToastTypes;
+import { Injectable } from '@angular/core';
+import { MessageService } from 'primeng/api';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToastService {
-  private _message = signal<TToastType>('Info');
+  constructor(private messageService: MessageService) {}
 
-  successMsg(msg: string) {
-    this._message.set('Success');
+  success(summary: string = 'Success', detail?: string): void {
+    this.messageService.add({ key: 'toaster', severity: 'success', summary, detail });
   }
 
-  errorMsg(msg: string) {
-    this._message.set('Error');
+  error(summary: string = 'Error', detail?: string): void {
+    this.messageService.add({ key: 'toaster', severity: 'error', summary, detail });
   }
 
-  infoMsg(msg: string) {
-    this._message.set('Info');
+  info(summary: string = 'Info', detail?: string): void {
+    this.messageService.add({ key: 'toaster', severity: 'info', summary, detail });
   }
 
-  warnMsg(msg: string) {
-    this._message.set('Warn');
-  }
-  
-  secondaryMsg(msg: string) {
-    this._message.set('Secondary');
+  warn(summary: string = 'Warning', detail?: string): void {
+    this.messageService.add({ key: 'toaster', severity: 'warn', summary, detail });
   }
 
-  contrastMsg(msg: string) {
-    this._message.set('Contrast');
+  contrast(summary: string = 'Info', detail?: string): void {
+    this.messageService.add({ key: 'toaster', severity: 'contrast', summary, detail });
+  }
+
+  secondary(summary: string = 'Warning', detail?: string): void {
+    this.messageService.add({ key: 'toaster', severity: 'secondary', summary, detail });
+  }
+
+  clear(): void {
+    this.messageService.clear();
   }
 }

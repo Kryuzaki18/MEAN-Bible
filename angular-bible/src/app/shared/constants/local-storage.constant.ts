@@ -1,3 +1,3 @@
 export const LocalStorageKeys = {
-  BOOKMARKS: 'bookmarks'
+  BOOKMARKS: 'bookmarks',
 };

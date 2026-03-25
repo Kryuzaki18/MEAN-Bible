@@ -33,7 +33,7 @@ export class Header {
 
   constructor(private bookmarkService: BookmarkService) {
     effect(() => {
-      const count = this.bookmarkService.bookmarksCount();
+      const count = this.bookmarkService.getBookmarksCount();
       this.bookmarksCount = count;
       this.loadMenuItems();
     });
@@ -60,7 +60,7 @@ export class Header {
         command: this.onToggleSidebar,
       },
       {
-        label: `Bookmarks${this.bookmarksCount ? ` (${this.bookmarksCount})` : ''}`,
+        label: `Bookmarks${this.bookmarksCount > 0 ? ` (${this.bookmarksCount})` : ''}`,
         icon: 'pi pi-bookmark',
         command: () => this.show(),
         disabled: this.bookmarksCount === 0,

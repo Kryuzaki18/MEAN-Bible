@@ -1,12 +1,15 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { Main } from './pages/main/main';
+
+// PrimeNG Modules
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
-  imports: [Main],
+  imports: [Main, ToastModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  standalone: true,
 })
 export class App {
-  protected readonly title = signal('angular-bible');
 }

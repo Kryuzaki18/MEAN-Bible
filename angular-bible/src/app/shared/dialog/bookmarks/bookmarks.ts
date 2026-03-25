@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, effect, computed } from '@angular/core';
+import { Component, signal, OnInit, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DatePipe, LowerCasePipe } from '@angular/common';
@@ -8,6 +8,7 @@ import { BookmarkedVerse, Verse } from '../../interfaces/verse';
 
 // Services
 import { BookmarkService } from '../../services/bookmark.service';
+import { ToastService } from '../../services/toast.service';
 
 // PrimeNG Modules
 import { CardModule } from 'primeng/card';
@@ -25,17 +26,19 @@ import { SortedDatesPipe } from '../../pipes/sorted-dates.pipes';
   standalone: true,
 })
 export class Bookmarks implements OnInit {
-  bookmarks = signal<BookmarkedVerse[]>([]);
   bookmarkCount: number = 0;
+
+  bookmarks = signal<BookmarkedVerse[]>([]);
   selectedCopyVerse = signal<Verse | null>(null);
 
   constructor(
     public ref: DynamicDialogRef,
     private router: Router,
     private bookmarkService: BookmarkService,
+    private toastService: ToastService,
   ) {
     effect(() => {
-      this.bookmarkCount = this.bookmarkService.bookmarksCount();
+      this.bookmarkCount = this.bookmarkService.getBookmarksCount();
     });
   }
 
@@ -43,15 +46,15 @@ export class Bookmarks implements OnInit {
     this.loadBookmarks();
   }
 
-  removeBookmark(verse: BookmarkedVerse | null): void {
+  removeBookmarked(verse: BookmarkedVerse): void {
     if (!verse) {
       return;
     }
 
-    this.bookmarkService.removeBookmark(verse);
+    this.bookmarkService.removeBookmarked(verse);
     this.loadBookmarks();
 
-    if (this.bookmarkService.bookmarksCount() === 0) {
+    if (this.bookmarkService.getBookmarksCount() === 0) {
       this.ref.close();
     }
   }
@@ -70,6 +73,10 @@ export class Bookmarks implements OnInit {
         .writeText(verseText)
         .then(() => {
           this.selectedCopyVerse.set(bookmark);
+          this.toastService.info(
+            `${bookmark.book} ${bookmark.chapter}:${bookmark.verse}`,
+            `has been copied to clipboard.`,
+          );
           console.log('Verse copied to clipboard:', verseText);
         })
         .catch((err) => {

@@ -90,9 +90,11 @@
               </span>
             </div>
             <div
-              [class.bookmark-verses]="isBookmarked(verse)"
-              [class.selected-verse]="selectedVerse()?.verse === verse.verse"
-              (click)="openPopoverVerseAction($event, verse, targetElement)"
+              [ngClass]="{
+                bookmarked: isBookmarked(verse),
+                'selected-verse': selectedVerse().verse === verse.verse,
+              }"
+              (click)="openPopoverVerseActions($event, verse, targetElement)"
             >
               <span class="md:text-lg text-sm">
                 @for (part of verse.text | highlight: searchControl.value; track $index) {
@@ -107,33 +109,33 @@
           </div>
         }
 
-        <p-popover #popoverVerse [dismissable]="true">
+        <p-popover #popoverVerseActions [dismissable]="true">
           @if (selectedVerse()) {
             <button
               class="absolute right-0 top-0 -mr-2 -mt-3 rounded-full w-5 h-5 leading-4 text-center bg-red-800 cursor-pointer"
-              (click)="popoverVerse.hide()"
+              (click)="popoverVerseActions.hide()"
             >
-             <span class="pi pi-times text-white" style="font-size: 0.7rem"></span>
+              <span class="pi pi-times text-white" style="font-size: 0.7rem"></span>
             </button>
 
             <div class="flex gap-1">
               <button
                 class="cursor-pointer text-xs border px-5 py-2 rounded text-emerald-500"
-                (click)="copyVerse(); popoverVerse.hide()"
+                (click)="copyVerse(); popoverVerseActions.hide()"
               >
                 📋 Copy
               </button>
               @if (isBookmarked(selectedVerse())) {
                 <button
                   class="cursor-pointer text-xs border px-5 py-2 rounded text-red-500"
-                  (click)="removeBookmark(); popoverVerse.hide()"
+                  (click)="removeBookmarked(); popoverVerseActions.hide()"
                 >
                   ❌ Remove
                 </button>
               } @else {
                 <button
                   class="cursor-pointer text-xs border px-5 py-2 rounded text-emerald-500"
-                  (click)="addBookmark(); popoverVerse.hide()"
+                  (click)="addBookmark(); popoverVerseActions.hide()"
                 >
                   🔖 Bookmark
                 </button>

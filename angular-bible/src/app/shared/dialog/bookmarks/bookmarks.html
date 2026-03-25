@@ -9,7 +9,7 @@
     <button class="cursor-pointer" (click)="ref.close()">❌</button>
   </div>
 
-  @for (bookmark of (bookmarks() | sortedDates); track $index) {
+  @for (bookmark of bookmarks() | sortedDates; track $index) {
     <div
       class="border-dashed border-b border-gray-700 py-3"
       [class.border-none]="$index === bookmarks().length - 1"
@@ -61,7 +61,7 @@
 
             <button
               class="cursor-pointer text-xs border px-5 py-2 rounded text-red-500"
-              (click)="removeBookmark(bookmark)"
+              (click)="removeBookmarked(bookmark)"
             >
               ❌ Remove
             </button>
