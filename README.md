@@ -16,8 +16,7 @@ frontend interface for browsing scripture.
 # 🚀 Features
 
 -   📚 Browse Bible books, chapters, and verses\
--   🔍 Search verses by keyword or reference (e.g. `Jn 3:16`)\
--   🧠 Abbreviation parsing (e.g. `Jn`, `Gen`, `Rev`)\
+-   🔍 Search verses by keyword\
 -   ⚡ RESTful API built with Express\
 -   🌐 Angular frontend UI\
 -   🗄️ MongoDB-based structured data\
@@ -54,7 +53,6 @@ User → Angular App → Express API → MongoDB → Express → Angular → Use
     │
     ├── api-bible/
     ├── angular-bible/
-    ├── .env
     └── README.md
 
 ------------------------------------------------------------------------
@@ -73,13 +71,13 @@ cd api-bible npm install
 
 Create `.env` file:
 
-PORT=3000 MONGO_URI=your_mongodb_connection_string
+PORT=7777 MONGO_URI=your_mongodb_connection_string
 
 ------------------------------------------------------------------------
 
 ## 3. Frontend Setup
 
-cd ../angular-bible npm install
+cd angular-bible npm install
 
 ------------------------------------------------------------------------
 
@@ -87,9 +85,9 @@ cd ../angular-bible npm install
 
 ## Start API
 
-cd api-bible npm run dev
+cd api-bible npm run start
 
-API runs at: http://localhost:3000
+API runs at: http://localhost:7777
 
 ------------------------------------------------------------------------
 
@@ -114,7 +112,6 @@ GET /api/books/:bookId/chapters
 ## Verses
 
 GET /api/verses?book=John&chapter=3 GET /api/verses/search?q=love GET
-/api/verses/reference?ref=Jn 3:16
 
 ------------------------------------------------------------------------
 
@@ -136,7 +133,6 @@ Database: MongoDB Atlas
 # 📌 Future Improvements
 
 -   Authentication\
--   Bookmarking\
 -   Multi-version support\
 
 ------------------------------------------------------------------------

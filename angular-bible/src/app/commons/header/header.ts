@@ -63,7 +63,6 @@ export class Header {
         label: `Bookmarks${this.bookmarksCount > 0 ? ` (${this.bookmarksCount})` : ''}`,
         icon: 'pi pi-bookmark',
         command: () => this.show(),
-        disabled: this.bookmarksCount === 0,
       },
     ];
   }
