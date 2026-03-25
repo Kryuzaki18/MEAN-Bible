@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:7777/api/bible'
+  apiUrl: 'https://api-bible-3kog.onrender.com/api/bible'
 };
