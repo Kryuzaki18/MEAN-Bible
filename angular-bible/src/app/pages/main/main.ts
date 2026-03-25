@@ -109,27 +109,6 @@ export class Main implements OnInit {
   ) {
     effect(() => {
       this.getAllBooks();
-
-      const foundBook = this.allBooks().find((b) => b.name === this.book());
-      if (foundBook) {
-        this.bookDetails.set(foundBook);
-
-        this.chapters.set(
-          Array.from({ length: foundBook.chapters }, (_, i) => ({
-            chapter: i + 1,
-            label: `Chapter ${i + 1}`,
-          })),
-        );
-      } else {
-        console.warn(`Book "${this.book()}" not found in the list.`);
-      }
-
-      if (this.selectedChapter() > this.bookDetails().chapters) {
-        this.selectedChapter.set(this.bookDetails().chapters);
-      }
-
-      this.getAllVersesByChapter(this.book(), this.selectedChapter());
-      this.selectedVerse.set({} as Verse);
     });
   }
 
@@ -248,6 +227,26 @@ export class Main implements OnInit {
       .subscribe({
         next: (data) => {
           this.allBooks.set(data);
+
+          const foundBook = this.allBooks().find((b) => b.name === this.book());
+          if (foundBook) {
+            this.bookDetails.set(foundBook);
+
+            this.chapters.set(
+              Array.from({ length: foundBook.chapters }, (_, i) => ({
+                chapter: i + 1,
+                label: `Chapter ${i + 1}`,
+              })),
+            );
+          }
+
+          if (this.selectedChapter() > this.bookDetails().chapters) {
+            this.selectedChapter.set(this.bookDetails().chapters);
+          }
+
+          this.selectedVerse.set({} as Verse);
+
+          this.getAllVersesByChapter(this.book(), this.selectedChapter());
         },
         error: (err) => console.error(err.message),
       });

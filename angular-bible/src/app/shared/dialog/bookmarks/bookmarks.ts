@@ -77,7 +77,6 @@ export class Bookmarks implements OnInit {
             `${bookmark.book} ${bookmark.chapter}:${bookmark.verse}`,
             `has been copied to clipboard.`,
           );
-          console.log('Verse copied to clipboard:', verseText);
         })
         .catch((err) => {
           console.error('Failed to copy verse:', err);

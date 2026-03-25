@@ -35,7 +35,6 @@ export class BookmarkService {
 
   addBookmark(selectedVerse: Verse): void {
     if (!selectedVerse) {
-      console.warn('No verse selected to bookmark.');
       return;
     }
 
@@ -60,18 +59,12 @@ export class BookmarkService {
       this.localStorageService.setLocalStorageItem(LocalStorageKeys.BOOKMARKS, allBookmarked);
       this.updateBookmarksCount(allBookmarked.length);
 
-      this.toastService.success(
-        `${book} ${chapter}:${verse}`,
-        `has been added to bookmarks.`,
-      );
-    } else {
-      console.log('Verse already bookmarked');
+      this.toastService.success(`${book} ${chapter}:${verse}`, `has been added to bookmarks.`);
     }
   }
 
   removeBookmarked(selectedVerse: Verse): void {
     if (!selectedVerse) {
-      console.warn('No verse selected to remove from bookmarks.');
       return;
     }
 

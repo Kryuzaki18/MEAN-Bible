@@ -58,8 +58,6 @@ export class BibleService {
   }
 
   private handleError(error: any) {
-    console.error('API Error:', error);
-
     let message = 'Something went wrong';
 
     if (error.status === 0) {

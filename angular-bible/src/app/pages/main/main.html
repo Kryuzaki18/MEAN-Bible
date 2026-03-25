@@ -144,12 +144,14 @@
           }
         </p-popover>
 
-        <p-scrolltop
-          target="parent"
-          [threshold]="100"
-          icon="pi pi-arrow-up"
-          [buttonProps]="{ severity: 'contrast', raised: true, rounded: true }"
-        />
+        @defer {
+          <p-scrolltop
+            target="parent"
+            [threshold]="100"
+            icon="pi pi-arrow-up"
+            [buttonProps]="{ severity: 'contrast', raised: true, rounded: true }"
+          />
+        }
       </p-scrollpanel>
     </div>
   </div>
