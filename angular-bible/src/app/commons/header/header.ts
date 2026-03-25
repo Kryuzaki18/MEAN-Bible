@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 
 // PrimeNG Modules
 import { AvatarModule } from 'primeng/avatar';
@@ -11,10 +11,10 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 // Services
 import { AppSettingsService } from '../../shared/services/app-settings.service';
+import { BookmarkService } from '../../shared/services/bookmark.service';
 
 // Dialogs
 import { Bookmarks } from '../../shared/dialog/bookmarks/bookmarks';
-
 
 @Component({
   selector: 'app-header',
@@ -23,15 +23,20 @@ import { Bookmarks } from '../../shared/dialog/bookmarks/bookmarks';
   styleUrl: './header.scss',
   standalone: true,
 })
-export class Header implements OnInit {
+export class Header {
   ref: DynamicDialogRef | undefined;
   items: MenuItem[] | undefined;
+  bookmarksCount: number = 0;
 
   public dialogService = inject(DialogService);
   private appSettings = inject(AppSettingsService);
 
-  ngOnInit(): void {
-    this.loadMenuItems();
+  constructor(private bookmarkService: BookmarkService) {
+    effect(() => {
+      const count = this.bookmarkService.bookmarksCount();
+      this.bookmarksCount = count;
+      this.loadMenuItems();
+    });
   }
 
   show(): void {
@@ -55,9 +60,10 @@ export class Header implements OnInit {
         command: this.onToggleSidebar,
       },
       {
-        label: 'Bookmarks',
+        label: `Bookmarks${this.bookmarksCount ? ` (${this.bookmarksCount})` : ''}`,
         icon: 'pi pi-bookmark',
         command: () => this.show(),
+        disabled: this.bookmarksCount === 0,
       },
     ];
   }

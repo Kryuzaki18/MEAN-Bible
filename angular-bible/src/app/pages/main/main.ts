@@ -110,8 +110,8 @@ export class Main implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const chapter = params.get('chapter') ? parseInt(params.get('chapter')!, 10) : 1;
-      this.selectedChapter.set(isNaN(chapter) ? 1 : chapter);
+      const raw = parseInt(params.get('chapter') ?? '1', 10);
+      this.selectedChapter.set(isNaN(raw) || raw < 1 ? 1 : raw);
       this.clearSearch();
     });
 

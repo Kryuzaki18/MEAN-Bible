@@ -7,11 +7,6 @@
   border-right: 1px solid #3f3f46;
 }
 
-.book-details {
-  width: 600px;
-  max-width: calc($main-width - 100px);
-}
-
 .verses-scrollpanel {
   height: calc(100vh - #{$header-height} - 120px);
 }

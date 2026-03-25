@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 // Interfaces
-import { Verse } from '../interfaces/verse';
+import { BookmarkedVerse, Verse } from '../interfaces/verse';
 
 // Constants
 import { LocalStorageKeys } from '../constants/local-storage.constant';
@@ -14,8 +14,11 @@ import { LocalStorageService } from '../../shared/services/local-storage.service
 })
 export class BookmarkService {
   maxBookmarks: number = 30;
+  bookmarksCount = signal<number>(0);
 
-  constructor(private localStorageService: LocalStorageService) {}
+  constructor(private localStorageService: LocalStorageService) {
+    this.bookmarksCount.set(this.getAllBookmarks().length);
+  }
 
   getAllBookmarks(): Verse[] {
     const storedBookmarks = this.localStorageService.getLocalStorageItem<Verse[]>(
@@ -31,7 +34,7 @@ export class BookmarkService {
       return;
     }
 
-    let existingData = this.getAllBookmarks();
+    let existingData: BookmarkedVerse[] = this.getAllBookmarks();
 
     if (existingData.length >= this.maxBookmarks) {
       return;
@@ -44,9 +47,13 @@ export class BookmarkService {
 
     if (!exists) {
       const newVerse = { book, chapter, verse, text };
-      existingData.push(newVerse);
+      existingData.push({
+        ...newVerse,
+        dateAdded: new Date().toISOString(),
+      });
 
       this.localStorageService.setLocalStorageItem(LocalStorageKeys.BOOKMARKS, existingData);
+      this.bookmarksCount.set(existingData.length);
     } else {
       console.log('Verse already bookmarked');
     }
@@ -70,5 +77,6 @@ export class BookmarkService {
     );
 
     this.localStorageService.setLocalStorageItem(LocalStorageKeys.BOOKMARKS, updatedData);
+    this.bookmarksCount.set(updatedData.length);
   }
 }
