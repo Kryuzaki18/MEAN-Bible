@@ -1,5 +1,5 @@
 <app-header></app-header>
-<app-sidebar></app-sidebar>
+<app-sidebar [allBooks]="allBooks()" [selectedBook]="selectedBook()!"></app-sidebar>
 <main class="flex items-center justify-center-safe">
   <div class="container flex flex-col">
     <div
@@ -14,12 +14,12 @@
         ></span>
       </span>
 
-      <span> Book of {{ book() }} </span>
+      <span> Book of {{ selectedBook()?.name }} </span>
     </div>
 
     <p-popover #op [dismissable]="true" styleClass="max-xl:-ml-3">
       <div class="w-100">
-        {{ bookDetails().description }}
+        {{ selectedBook()?.description }}
       </div>
     </p-popover>
 
@@ -28,9 +28,10 @@
         styleClass="flex items-center justify-center h-10 max-md:h-7"
         [disabled]="isFirstChapter()"
         (click)="previousChapter()"
+        size="small"
       >
-        <span class="pi pi-chevron-left"></span>
-        <span class="hidden lg:block">Previous Chapter</span>
+        <span class="pi pi-chevron-left text-gray-800"></span>
+        <span class="hidden lg:block text-gray-800 font-semibold">Previous Chapter</span>
       </p-button>
 
       <div class="flex items-center justify-center gap-1 max-md:order-first">
@@ -72,15 +73,22 @@
         styleClass="flex items-center justify-center h-10 max-md:h-7"
         [disabled]="isLastChapter()"
         (click)="nextChapter()"
+        size="small"
       >
-        <span class="hidden lg:block">Next Chapter</span>
-        <span class="pi pi-chevron-right"></span>
+        <span class="hidden lg:block text-gray-800 font-semibold">Next Chapter</span>
+        <span class="pi pi-chevron-right text-gray-800"></span>
       </p-button>
     </div>
 
     <div class="px-2 mt-5">
       <p-scrollpanel class="verses-scrollpanel max-md:h-max">
         @for (verse of verses(); track $index) {
+          @let isBookmarked =
+            bookmarkService.bookmarks().find(
+          (item) =>
+            item.book === verse.book && +item.chapter === +verse.chapter && +item.verse === +verse.verse
+        );
+
           <div class="flex items-start">
             <div
               class="flex items-center justify-center text-center bg-white px-1 mr-2 mt-1.5 rounded-xs"
@@ -91,7 +99,7 @@
             </div>
             <div
               [ngClass]="{
-                bookmarked: isBookmarked(verse),
+                bookmarked: isBookmarked,
                 'selected-verse': selectedVerse().verse === verse.verse,
               }"
               (click)="openPopoverVerseActions($event, verse, targetElement)"
@@ -99,7 +107,7 @@
               <span class="md:text-lg text-sm">
                 @for (part of verse.text | highlight: searchControl.value; track $index) {
                   @if (part.match) {
-                    <mark class="highlight">{{ part.text }}</mark>
+                    <mark>{{ part.text }}</mark>
                   } @else {
                     {{ part.text }}
                   }
@@ -125,7 +133,7 @@
               >
                 📋 Copy
               </button>
-              @if (isBookmarked(selectedVerse())) {
+              @if (isBookmarked()) {
                 <button
                   class="cursor-pointer text-xs border px-5 py-2 rounded text-red-500"
                   (click)="removeBookmarked(); popoverVerseActions.hide()"

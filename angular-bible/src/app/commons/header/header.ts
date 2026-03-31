@@ -1,13 +1,8 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 
 // PrimeNG Modules
-import { AvatarModule } from 'primeng/avatar';
-import { BadgeModule } from 'primeng/badge';
-import { MenubarModule } from 'primeng/menubar';
-import { InputTextModule } from 'primeng/inputtext';
-import { RippleModule } from 'primeng/ripple';
-import { MenuItem } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ButtonModule } from 'primeng/button';
 
 // Services
 import { AppSettingsService } from '../../shared/services/app-settings.service';
@@ -18,28 +13,25 @@ import { Bookmarks } from '../../shared/dialog/bookmarks/bookmarks';
 
 @Component({
   selector: 'app-header',
-  imports: [AvatarModule, BadgeModule, MenubarModule, InputTextModule, RippleModule],
+  imports: [ButtonModule],
   templateUrl: './header.html',
   styleUrl: './header.scss',
   standalone: true,
 })
 export class Header {
+  dialogService = inject(DialogService);
+  bookmarkService = inject(BookmarkService);
+  appSettingsService = inject(AppSettingsService);
+
   ref: DynamicDialogRef | undefined;
-  items: MenuItem[] | undefined;
-  bookmarksCount: number = 0;
 
-  public dialogService = inject(DialogService);
-  private appSettings = inject(AppSettingsService);
-
-  constructor(private bookmarkService: BookmarkService) {
-    effect(() => {
-      const count = this.bookmarkService.getBookmarksCount();
-      this.bookmarksCount = count;
-      this.loadMenuItems();
-    });
-  }
+  bookmarks = this.bookmarkService.bookmarks;
 
   show(): void {
+    if (this.bookmarks().length === 0) {
+      return;
+    }
+
     this.dialogService.open(Bookmarks, {
       header: '',
       showHeader: false,
@@ -51,23 +43,4 @@ export class Header {
       },
     });
   }
-
-  private loadMenuItems(): void {
-    this.items = [
-      {
-        label: 'Books',
-        icon: 'pi pi-book',
-        command: this.onToggleSidebar,
-      },
-      {
-        label: `Bookmarks${this.bookmarksCount > 0 ? ` (${this.bookmarksCount})` : ''}`,
-        icon: 'pi pi-bookmark',
-        command: () => this.show(),
-      },
-    ];
-  }
-
-  private onToggleSidebar = (): void => {
-    this.appSettings.toggleSidebar();
-  };
 }

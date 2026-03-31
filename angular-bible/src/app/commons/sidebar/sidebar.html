@@ -2,16 +2,16 @@
   #drawerRef
   styleClass="!w-70"
   header="Books"
-  [(visible)]="isSidebarVisible"
+  [visible]="isSidebarVisible()"
   [blockScroll]="true"
   (onHide)="onDrawerClose()"
 >
   <div class="flex flex-col text-left">
-    @for (book of books(); track $index) {
+    @for (book of allBooks(); track $index) {
       <div
         class="flex items-center gap-3 p-1 w-full cursor-pointer"
-        [class.bg-gray-800]="book.name === activeBook"
-        [class.text-emerald-500]="book.name === activeBook"
+        [class.bg-gray-800]="book.name === selectedBook().name"
+        [class.text-emerald-500]="book.name === selectedBook().name"
         (click)="navigateToBook(book.name)"
       >
         <span class="pi pi-book"></span>

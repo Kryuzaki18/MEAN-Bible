@@ -1,6 +1,5 @@
-import { Component, DestroyRef, effect, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, input } from '@angular/core';
+import { RouterModule, Router } from '@angular/router';
 
 // PrimeNG Modules
 import { DrawerModule } from 'primeng/drawer';
@@ -10,7 +9,6 @@ import { ButtonModule } from 'primeng/button';
 import { Book } from '../../shared/interfaces/book';
 
 // Services
-import { BibleService } from '../../shared/services/bible.service';
 import { AppSettingsService } from '../../shared/services/app-settings.service';
 
 @Component({
@@ -19,31 +17,15 @@ import { AppSettingsService } from '../../shared/services/app-settings.service';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
-export class Sidebar implements OnInit {
-  isSidebarVisible: boolean = false;
-  activeBook: string = '';
-  books = signal<Book[]>([]);
+export class Sidebar {
+  selectedBook = input<Book>({} as Book);
+  allBooks = input<Book[]>([]);
 
-  private route = inject(ActivatedRoute);
+  isSidebarVisible = computed(() => this.appSettings.isSidebarVisible);
+
   private appSettings = inject(AppSettingsService);
-  private destroyRef = inject(DestroyRef);
 
-  constructor(
-    private router: Router,
-    private bibleService: BibleService,
-  ) {
-    effect(() => {
-      this.isSidebarVisible = this.appSettings.isSidebarVisible;
-    });
-  }
-
-  ngOnInit(): void {
-    this.fetchBooks();
-    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const book = params.get('book') || 'Genesis';
-      this.activeBook = book;
-    });
-  }
+  constructor(private router: Router) {}
 
   onDrawerClose(): void {
     this.appSettings.toggleSidebar();
@@ -52,18 +34,5 @@ export class Sidebar implements OnInit {
   navigateToBook(bookName: string): void {
     this.router.navigate(['/home'], { queryParams: { book: bookName, chapter: 1 } });
     this.onDrawerClose();
-  }
-
-  private fetchBooks(): void {
-    this.bibleService
-      .getBooks()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          const sortedBooks = data.sort((a, b) => a.order - b.order);
-          this.books.set(sortedBooks);
-        },
-        error: (err) => console.error(err.message),
-      });
   }
 }

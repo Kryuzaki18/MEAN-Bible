@@ -1,9 +1,43 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, effect } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocalStorageService {
+  private localStorageSignal = new Map<string, ReturnType<typeof signal>>();
+
+  getLocalStorageSignal<T>(key: string, defaultValue: T) {
+    if (!this.localStorageSignal.has(key)) {
+      const initial = this.getLocalStorageItem<T>(key, defaultValue);
+      const s = signal<T>(initial);
+
+      effect(() => {
+        this.setLocalStorageItem(key, s());
+      });
+
+      this.localStorageSignal.set(key, s);
+    }
+
+    return this.localStorageSignal.get(key)! as ReturnType<typeof signal<T>>;
+  }
+
+  updateLocalStorageSignal<T>(key: string, value: T): void {
+    const s = this.localStorageSignal.get(key);
+    if (s) {
+      s.set(value);
+    } else {
+      console.warn(`Signal for key "${key}" not found.`);
+    }
+  }
+
+  removeLocalStorageSignal(key: string): void {
+    const s = this.localStorageSignal.get(key);
+    if (s) {
+      this.localStorageSignal.delete(key);
+    }
+    this.removeLocalStorageItem(key);
+  }
+
   getLocalStorageItem<T>(key: string, defaultValue: T): T {
     try {
       const storedValue = localStorage.getItem(key);
@@ -21,7 +55,7 @@ export class LocalStorageService {
       console.error(`Error saving localStorage key "${key}"`, error);
     }
   }
-  
+
   removeLocalStorageItem(key: string): void {
     try {
       localStorage.removeItem(key);

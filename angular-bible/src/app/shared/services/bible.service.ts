@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, shareReplay, catchError, throwError } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+// Environment
+import { environment } from '../../../environments/environment.prod';
+
+// Interfaces
 import { Book } from '../interfaces/book';
 import { Verse } from '../interfaces/verse';
 

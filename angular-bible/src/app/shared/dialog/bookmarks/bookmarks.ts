@@ -1,4 +1,4 @@
-import { Component, signal, OnInit, effect } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DatePipe, LowerCasePipe } from '@angular/common';
@@ -25,26 +25,17 @@ import { SortedDatesPipe } from '../../pipes/sorted-dates.pipes';
   styleUrl: './bookmarks.scss',
   standalone: true,
 })
-export class Bookmarks implements OnInit {
-  bookmarkCount: number = 0;
+export class Bookmarks {
+  private bookmarkService = inject(BookmarkService);
 
-  bookmarks = signal<BookmarkedVerse[]>([]);
+  bookmarks = this.bookmarkService.bookmarks;
   selectedCopyVerse = signal<Verse | null>(null);
 
   constructor(
     public ref: DynamicDialogRef,
     private router: Router,
-    private bookmarkService: BookmarkService,
     private toastService: ToastService,
-  ) {
-    effect(() => {
-      this.bookmarkCount = this.bookmarkService.getBookmarksCount();
-    });
-  }
-
-  ngOnInit(): void {
-    this.loadBookmarks();
-  }
+  ) {}
 
   removeBookmarked(verse: BookmarkedVerse): void {
     if (!verse) {
@@ -52,9 +43,8 @@ export class Bookmarks implements OnInit {
     }
 
     this.bookmarkService.removeBookmarked(verse);
-    this.loadBookmarks();
 
-    if (this.bookmarkService.getBookmarksCount() === 0) {
+    if (this.bookmarks().length === 0) {
       this.ref.close();
     }
   }
@@ -82,10 +72,5 @@ export class Bookmarks implements OnInit {
           console.error('Failed to copy verse:', err);
         });
     }
-  }
-
-  private loadBookmarks(): void {
-    const storedBookmarks = this.bookmarkService.getAllBookmarks();
-    this.bookmarks.set(storedBookmarks);
   }
 }

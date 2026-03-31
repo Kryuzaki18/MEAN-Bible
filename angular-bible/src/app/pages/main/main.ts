@@ -42,11 +42,6 @@ import { Popover } from 'primeng/popover';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 
-interface IChapter {
-  label: string;
-  chapter: number;
-}
-
 @Component({
   selector: 'app-main',
   imports: [
@@ -71,6 +66,7 @@ interface IChapter {
   standalone: true,
 })
 export class Main implements OnInit {
+
   @ViewChild('popoverVerseActions') popoverVerseActions!: Popover;
   route = inject(ActivatedRoute);
 
@@ -79,62 +75,57 @@ export class Main implements OnInit {
   defaultBook: string = 'Genesis';
 
   allBooks = signal<Book[]>([]);
-  chapters = signal<IChapter[]>([]);
   selectedChapter = signal<number>(1);
   initialVerses: Verse[] = [];
   verses = signal<Verse[]>([]);
-  bookDetails = signal<Book>({} as Book);
   selectedVerse = signal<Verse>({} as Verse);
   queryParams = toSignal(this.route.queryParamMap);
 
-  book = computed(() => {
-    const newBook = this.queryParams()?.get('book');
-    const bookFound = this.allBooks().find((b) => b.name.toLowerCase() === newBook?.toLowerCase());
-    if (!newBook || !bookFound) {
-      return this.defaultBook;
-    }
-
-    return bookFound.name;
-  });
   isFirstChapter = computed(() => this.selectedChapter() === 1);
   isLastChapter = computed(() => this.selectedChapter() === this.chapters().length);
 
+  selectedBook = computed(() => {
+    const newBook = this.queryParams()?.get('book') || this.defaultBook;
+    return this.allBooks().find((b) => b.name.toLowerCase() === newBook.toLowerCase());
+  });
+
+  chapters = computed(() => {
+    const book = this.selectedBook();
+    const totalChapters = book?.chapters;
+    if (totalChapters) {
+      return Array.from({ length: totalChapters }, (_, i) => ({
+        chapter: i + 1,
+        label: `Chapter ${i + 1}`,
+      }));
+    }
+    return [];
+  });
+
+  isBookmarked = computed(() => {
+    const bookmarks = this.bookmarkService.bookmarks();
+    const isBookmarked = bookmarks.find(
+      (item) =>
+        item.book === this.selectedVerse().book &&
+        +item.chapter === +this.selectedVerse().chapter &&
+        +item.verse === +this.selectedVerse().verse
+    );
+
+    return !!isBookmarked;
+  });
+
+  bookmarkService = inject(BookmarkService);
   private destroyRef = inject(DestroyRef);
 
   constructor(
     private router: Router,
     private bibleService: BibleService,
-    private bookmarkService: BookmarkService,
     private toastService: ToastService,
   ) {
     effect(() => {
-      const bookName = this.book();
-      const allBooks = this.allBooks();
+      const book = this.selectedBook();
       const selectedChapter = this.selectedChapter();
-
-      const foundBook = allBooks.find((b) => b.name === bookName);
-
-      if (!foundBook) return;
-
-      this.bookDetails.set(foundBook);
-
-      const totalChapters = foundBook.chapters;
-      this.chapters.set(
-        Array.from({ length: totalChapters }, (_, i) => ({
-          chapter: i + 1,
-          label: `Chapter ${i + 1}`,
-        })),
-      );
-
-      const safeChapter = Math.min(selectedChapter, totalChapters);
-      if (safeChapter !== selectedChapter) {
-        this.selectedChapter.set(safeChapter);
-      }
-
-      this.selectedVerse.set({} as Verse);
-
-      if (bookName && safeChapter) {
-        this.getAllVersesByChapter(bookName, safeChapter);
+      if (book?.name && selectedChapter) {
+        this.getAllVersesByChapter(book.name, selectedChapter);
       }
     });
   }
@@ -156,21 +147,18 @@ export class Main implements OnInit {
   }
 
   openPopoverVerseActions(event: MouseEvent, verse: Verse, target: HTMLElement): void {
-    this.selectedVerse.set(verse);
-    this.popoverVerseActions.show(event, target);
-    this.popoverVerseActions.hide();
-    setTimeout(() => {
-      this.popoverVerseActions.show(event, target);
-    });
-  }
+    const isSameVerse = this.selectedVerse()?.verse === verse.verse;
 
-  isBookmarked(verse: Verse): boolean {
-    return !!this.bookmarkService
-      .getAllBookmarks()
-      .find(
-        (item) =>
-          item.book === verse.book && item.chapter === verse.chapter && item.verse === verse.verse,
-      );
+    if (isSameVerse) {
+      this.popoverVerseActions.toggle(event, target);
+    } else {
+      this.popoverVerseActions.hide();
+      this.selectedVerse.set(verse);
+
+      setTimeout(() => {
+        this.popoverVerseActions.show(event, target);
+      }, 0);
+    }
   }
 
   addBookmark(): void {

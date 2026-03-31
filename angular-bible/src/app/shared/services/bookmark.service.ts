@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
 // Interfaces
 import { BookmarkedVerse, Verse } from '../interfaces/verse';
@@ -14,51 +14,40 @@ import { ToastService } from './toast.service';
   providedIn: 'root',
 })
 export class BookmarkService {
-  maxBookmarks: number = 30;
+  private localStorageService = inject(LocalStorageService);
+  private readonly maxBookmarks: number = 30;
 
-  private bookmarksCount = signal<number>(0);
+  bookmarks = this.localStorageService.getLocalStorageSignal<BookmarkedVerse[]>(
+    LocalStorageKeys.BOOKMARKS,
+    [],
+  );
 
-  constructor(
-    private localStorageService: LocalStorageService,
-    private toastService: ToastService,
-  ) {
-    this.updateBookmarksCount(this.getAllBookmarks().length);
-  }
-
-  getAllBookmarks(): BookmarkedVerse[] {
-    const storedBookmarks = this.localStorageService.getLocalStorageItem<BookmarkedVerse[]>(
-      LocalStorageKeys.BOOKMARKS,
-      [],
-    );
-    return storedBookmarks;
-  }
+  constructor(private toastService: ToastService) {}
 
   addBookmark(selectedVerse: Verse): void {
     if (!selectedVerse) {
       return;
     }
 
-    let allBookmarked: BookmarkedVerse[] = this.getAllBookmarks();
-
-    if (allBookmarked.length >= this.maxBookmarks) {
+    if (this.bookmarks().length >= this.maxBookmarks) {
       return;
     }
 
-    const { book, chapter, verse, text } = selectedVerse || {};
-    const exists = allBookmarked.some(
-      (item) => item.book === book && item.chapter === chapter && item.verse === verse,
+    const { book, chapter, verse } = selectedVerse || {};
+    const exists = this.bookmarks().some(
+      (item) => item.book === book && +item.chapter === +chapter && +item.verse === +verse,
     );
 
     if (!exists) {
-      const newVerse = { book, chapter, verse, text };
-      allBookmarked.push({
-        ...newVerse,
-        dateAdded: new Date().toISOString(),
-      });
+      const newBookmark: BookmarkedVerse[] = [
+        {
+          ...selectedVerse,
+          dateAdded: new Date().toISOString(),
+        },
+        ...this.bookmarks(),
+      ];
 
-      this.localStorageService.setLocalStorageItem(LocalStorageKeys.BOOKMARKS, allBookmarked);
-      this.updateBookmarksCount(allBookmarked.length);
-
+      this.localStorageService.updateLocalStorageSignal(LocalStorageKeys.BOOKMARKS, newBookmark);
       this.toastService.success(`${book} ${chapter}:${verse}`, `has been added to bookmarks.`);
     }
   }
@@ -68,9 +57,7 @@ export class BookmarkService {
       return;
     }
 
-    let allBookmarked: BookmarkedVerse[] = this.getAllBookmarks();
-
-    const updatedBookmarked = allBookmarked.filter(
+    const updatedBookmarked = this.bookmarks().filter(
       (item) =>
         !(
           item.book === selectedVerse.book &&
@@ -78,16 +65,9 @@ export class BookmarkService {
           item.verse === selectedVerse.verse
         ),
     );
-
-    this.localStorageService.setLocalStorageItem(LocalStorageKeys.BOOKMARKS, updatedBookmarked);
-    this.updateBookmarksCount(updatedBookmarked.length);
-  }
-
-  getBookmarksCount(): number {
-    return this.bookmarksCount();
-  }
-
-  private updateBookmarksCount(count: number): void {
-    this.bookmarksCount.set(count);
+    this.localStorageService.updateLocalStorageSignal(
+      LocalStorageKeys.BOOKMARKS,
+      updatedBookmarked,
+    );
   }
 }

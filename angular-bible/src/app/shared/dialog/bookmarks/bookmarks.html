@@ -1,9 +1,13 @@
 <div class="flex flex-col">
   <div class="flex justify-between my-4">
-    <h2>
-      My Bookmarks
-      @if (bookmarkCount > 0) {
-        <span class="text-base">({{ bookmarkCount }})</span>
+    <h2 class="flex items-center gap-2">
+      <span>My Bookmarks</span>
+      @if (bookmarks().length > 0) {
+        <span
+          class="bg-red-800 text-white rounded w-[20px] h-[20px] flex items-center justify-center text-xs"
+        >
+          {{ bookmarks().length }}
+        </span>
       }
     </h2>
     <button class="cursor-pointer" (click)="ref.close()">❌</button>
@@ -19,8 +23,8 @@
         >" Chapter
         <span class="text-emerald-600 font-bold">{{ bookmark.chapter }}</span>
       </div>
-      <div class="flex items-center justify-between max-lg:flex-col">
-        <div class="flex flex-col">
+      <div class="flex items-center justify-between max-lg:flex-col max-lg:items-start">
+        <div class="flex flex-col items-start">
           <div class="flex items-start">
             <div
               class="flex items-center justify-center text-center bg-white px-1 mr-2 mt-1.5 rounded-xs"
@@ -40,7 +44,7 @@
           >
         </div>
 
-        <div class="w-100 flex justify-end max-lg:justify-center">
+        <div class="w-100 flex justify-end max-lg:justify-center max-lg:w-full">
           <div class="flex flex-col gap-2 max-lg:flex-row max-lg:mt-2">
             <button
               class="cursor-pointer text-xs border px-5 py-2 rounded text-emerald-500"
