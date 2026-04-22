@@ -47,7 +47,7 @@
         <div class="w-100 flex justify-end max-lg:justify-center max-lg:w-full">
           <div class="flex flex-col gap-2 max-lg:flex-row max-lg:mt-2">
             <button
-              class="cursor-pointer text-xs border px-5 py-2 rounded text-emerald-500"
+              class="cursor-pointer bg-green-500/50 hover:bg-green-700 text-xs px-5 py-2 rounded"
               (click)="copyVerse(bookmark)"
             >
               @if (
@@ -55,16 +55,14 @@
                 selectedCopyVerse()?.chapter === bookmark.chapter &&
                 selectedCopyVerse()?.verse === bookmark.verse
               ) {
-                ✔️
+                ✔️ Copied
               } @else {
-                📋
+                📋 Copy
               }
-
-              Copy
             </button>
 
             <button
-              class="cursor-pointer text-xs border px-5 py-2 rounded text-red-500"
+              class="cursor-pointer bg-red-500/50 hover:bg-red-700 text-xs px-5 py-2 rounded"
               (click)="removeBookmarked(bookmark)"
             >
               ❌ Remove

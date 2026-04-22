@@ -1,5 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
+import { NgClass } from '@angular/common';
 
 // PrimeNG Modules
 import { DrawerModule } from 'primeng/drawer';
@@ -13,7 +14,7 @@ import { AppSettingsService } from '../../shared/services/app-settings.service';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterModule, DrawerModule, ButtonModule],
+  imports: [RouterModule, NgClass, DrawerModule, ButtonModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
