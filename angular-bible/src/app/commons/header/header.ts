@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 
 // PrimeNG Modules
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -22,6 +22,8 @@ export class Header {
   dialogService = inject(DialogService);
   bookmarkService = inject(BookmarkService);
   appSettingsService = inject(AppSettingsService);
+
+  onToggleSidebar = output<void>();
 
   ref: DynamicDialogRef | undefined;
 

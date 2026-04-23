@@ -1,10 +1,6 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
-
-// PrimeNG Modules
-import { DrawerModule } from 'primeng/drawer';
-import { ButtonModule } from 'primeng/button';
 
 // Interfaces
 import { Book } from '../../shared/interfaces/book';
@@ -12,9 +8,12 @@ import { Book } from '../../shared/interfaces/book';
 // Services
 import { AppSettingsService } from '../../shared/services/app-settings.service';
 
+// PrimeNG Modules
+import { ButtonModule } from 'primeng/button';
+
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterModule, NgClass, DrawerModule, ButtonModule],
+  imports: [RouterModule, NgClass, ButtonModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
@@ -23,6 +22,8 @@ export class Sidebar {
   allBooks = input<Book[]>([]);
 
   isSidebarVisible = computed(() => this.appSettings.isSidebarVisible);
+
+  onBookSelected = output<string>();
 
   private appSettings = inject(AppSettingsService);
 
@@ -33,7 +34,7 @@ export class Sidebar {
   }
 
   navigateToBook(bookName: string): void {
+    this.onBookSelected.emit(bookName);
     this.router.navigate(['/home'], { queryParams: { book: bookName, chapter: 1 } });
-    this.onDrawerClose();
   }
 }

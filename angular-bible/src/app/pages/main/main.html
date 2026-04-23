@@ -1,29 +1,31 @@
-<app-header></app-header>
-<app-sidebar [allBooks]="allBooks()" [selectedBook]="selectedBook()!"></app-sidebar>
-<main class="flex items-center justify-center-safe">
+<div class="header-container border-b border-gray-800">
+  <app-header (onToggleSidebar)="appSettings.toggleSidebar()"></app-header>
+</div>
+
+<p-drawer
+  [visible]="appSettings.isSidebarVisible()"
+  (visibleChange)="appSettings.isSidebarVisible.set($event)"
+  header="Books"
+  class="lg:hidden"
+>
+  <app-sidebar
+    [allBooks]="allBooks()"
+    [selectedBook]="selectedBook()!"
+    (onBookSelected)="appSettings.isSidebarVisible.set(false)"
+  ></app-sidebar>
+</p-drawer>
+
+<main class="flex justify-between max-w-[1440px] mx-auto border-x border-gray-800 relative">
+  <div class="hidden lg:block sidebar-container border-r border-gray-800">
+    <p-scrollpanel class="h-full">
+      <app-sidebar [allBooks]="allBooks()" [selectedBook]="selectedBook()!"></app-sidebar>
+    </p-scrollpanel>
+  </div>
+
   <div class="container flex flex-col">
     <div
-      class="flex gap-1 items-center justify-center text-2xl text-emerald-500 font-bold mt-2 max-md:text-base"
+      class="filters-container flex items-center justify-between gap-1 p-2 bg-gray-950/80 min-lg:px-30"
     >
-      <span class="md:block hidden">
-        <span
-          class="pi pi-question-circle cursor-pointer"
-          (click)="op.toggle($event)"
-          pTooltip="What is this book about?"
-          tooltipPosition="bottom"
-        ></span>
-      </span>
-
-      <span> Book of {{ selectedBook()?.name }} </span>
-    </div>
-
-    <p-popover #op [dismissable]="true" styleClass="max-xl:-ml-3">
-      <div class="w-100">
-        {{ selectedBook()?.description }}
-      </div>
-    </p-popover>
-
-    <div class="flex items-center lg:justify-between justify-center flex-wrap gap-1 px-2">
       <p-button
         styleClass="flex items-center justify-center h-10 max-md:h-7 "
         [disabled]="isFirstChapter()"
@@ -34,7 +36,7 @@
         <span class="hidden lg:block text-gray-800 font-semibold text-xs">Previous Chapter</span>
       </p-button>
 
-      <div class="flex items-center justify-center gap-1 max-md:order-first">
+      <div class="flex items-center justify-center gap-1">
         <p-select
           [options]="chapters()"
           [(ngModel)]="selectedChapter"
@@ -80,8 +82,37 @@
       </p-button>
     </div>
 
-    <div class="px-2 mt-5">
-      <p-scrollpanel class="verses-scrollpanel max-md:h-max">
+    <div
+      class="book-chapter-container flex flex-col items-center justify-center gap-1 bg-gray-950/40"
+    >
+      <div class="flex gap-1 items-center justify-center text-lg text-emerald-500 font-bold">
+        <span class="md:block hidden">
+          <span
+            class="pi pi-question-circle cursor-pointer"
+            (click)="op.toggle($event)"
+            pTooltip="What is this book about?"
+            tooltipPosition="bottom"
+          ></span>
+        </span>
+
+        <span class="mr-3"> {{ selectedBook()?.name }} </span>
+      </div>
+      <div>
+        <span class="text-4xl"> {{ selectedChapter() }} </span>
+      </div>
+      <div>
+        <span class="text-lg"> Chapter </span>
+      </div>
+    </div>
+
+    <p-popover #op [dismissable]="true" styleClass="max-xl:-ml-3">
+      <div class="w-100">
+        {{ selectedBook()?.description }}
+      </div>
+    </p-popover>
+
+    <p-scrollpanel class="verses-container">
+      <div class="mb-10 relative">
         @for (verse of verses(); track $index) {
           @let isBookmarked =
             bookmarkService.bookmarks().find(
@@ -89,22 +120,22 @@
             item.book === verse.book && +item.chapter === +verse.chapter && +item.verse === +verse.verse
         );
 
-          <div class="flex items-start">
-            <div
-              class="flex items-center justify-center text-center bg-white px-1 mr-2 mt-1.5 rounded-xs"
-            >
-              <span class="text-emerald-800 text-xs font-bold" #targetElement>
+          <div class="flex items-start min-lg:px-30 py-5 px-2">
+            <div class="flex px-1 ml-2 mr-5 rounded-xs">
+              <span class="text-md font-bold">
                 {{ verse.verse }}
               </span>
             </div>
+
             <div
               [ngClass]="{
                 bookmarked: isBookmarked,
                 'selected-verse': selectedVerse().verse === verse.verse,
               }"
+              #targetElement
               (click)="openPopoverVerseActions($event, verse, targetElement)"
             >
-              <span class="md:text-lg text-sm">
+              <span class="md:text-lg text-xs">
                 @for (part of verse.text | highlight: searchControl.value; track $index) {
                   @if (part.match) {
                     <mark>{{ part.text }}</mark>
@@ -152,17 +183,15 @@
             </div>
           }
         </p-popover>
+      </div>
 
-        @defer {
-          <p-scrolltop
-            target="parent"
-            [threshold]="100"
-            icon="pi pi-arrow-up"
-            [buttonProps]="{ severity: 'contrast', raised: true, rounded: true }"
-          />
-        }
-      </p-scrollpanel>
-    </div>
+      <!-- <p-scrolltop
+        target="parent"
+        [threshold]="100"
+        icon="pi pi-arrow-up"
+        [buttonProps]="{ severity: 'contrast', raised: true, rounded: true }"
+      /> -->
+    </p-scrollpanel>
   </div>
 </main>
 <footer></footer>

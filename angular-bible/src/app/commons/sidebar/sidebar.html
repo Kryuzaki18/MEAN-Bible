@@ -1,23 +1,14 @@
-<p-drawer
-  #drawerRef
-  styleClass="!w-70"
-  header="Books"
-  [visible]="isSidebarVisible()"
-  [blockScroll]="true"
-  (onHide)="onDrawerClose()"
->
-  <div class="flex flex-col text-left">
-    @for (book of allBooks(); track $index) {
-      <div
-        class="flex items-center gap-3 p-1 w-full cursor-pointer hover:bg-green-950 font-light"
-        [ngClass]="{
-          'bg-green-950 text-green-300 font-medium': book.name === selectedBook().name,
-        }"
-        (click)="navigateToBook(book.name)"
-      >
-        <span class="pi pi-book"></span>
-        <span class="book-name">{{ book.name }}</span>
-      </div>
-    }
-  </div>
-</p-drawer>
+<aside class="flex flex-col p-3">
+  @for (book of allBooks(); track $index) {
+    <div
+      class="flex items-center gap-3 py-1.5 w-full cursor-pointer hover:bg-green-950 font-light"
+      [ngClass]="{
+        'bg-green-950 text-green-300 font-medium': book.name === selectedBook().name,
+      }"
+      (click)="navigateToBook(book.name)"
+    >
+      <span class="pi pi-book"></span>
+      <span class="book-name">{{ book.name }}</span>
+    </div>
+  }
+</aside>

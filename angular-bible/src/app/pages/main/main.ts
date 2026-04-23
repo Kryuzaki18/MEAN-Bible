@@ -41,6 +41,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Popover } from 'primeng/popover';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { DrawerModule } from 'primeng/drawer';
+
+// Services
+import { AppSettingsService } from '../../shared/services/app-settings.service';
 
 @Component({
   selector: 'app-main',
@@ -60,12 +64,14 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
     HighlightPipe,
     InputGroupModule,
     InputGroupAddonModule,
+    DrawerModule,
   ],
   templateUrl: './main.html',
   styleUrl: './main.scss',
   standalone: true,
 })
 export class Main implements OnInit {
+  appSettings = inject(AppSettingsService);
 
   @ViewChild('popoverVerseActions') popoverVerseActions!: Popover;
   route = inject(ActivatedRoute);

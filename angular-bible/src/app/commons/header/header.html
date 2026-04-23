@@ -1,23 +1,22 @@
-<header class="flex items-center justify-center-safe">
-  <div class="container flex items-center gap-2 px-2 border">
+<header class="flex items-center justify-between-safe px-4 max-w-[1440px] mx-auto h-full">
+  <div class="flex items-center gap-4">
     <p-button
-      class="cursor-pointer flex gap-2"
-      variant="outlined"
-      size="small"
-      (click)="appSettingsService.toggleSidebar()"
-    >
-      <span class="pi pi-book"></span>
-      <span>Books</span>
-    </p-button>
-
-    <p-button class="cursor-pointer flex gap-2" variant="outlined" size="small" (click)="show()">
-      <span class="pi pi-bookmark"></span>
-      <span>Bookmarks</span>
-      @if (bookmarks().length > 0) {
-        <span class="bg-red-700 text-white rounded w-[18px] text-xs">
-          {{ bookmarks().length }}
-        </span>
-      }
-    </p-button>
+      icon="pi pi-bars"
+      (click)="onToggleSidebar.emit()"
+      class="lg:hidden"
+      [text]="true"
+      severity="secondary"
+    />
+    <div class="flex items-center gap-2">
+      <p-button class="cursor-pointer flex gap-2" variant="outlined" size="small" (click)="show()">
+        <span class="pi pi-bookmark"></span>
+        <span>Bookmarks</span>
+        @if (bookmarks().length > 0) {
+          <span class="bg-red-700 text-white rounded w-[18px] text-xs">
+            {{ bookmarks().length }}
+          </span>
+        }
+      </p-button>
+    </div>
   </div>
 </header>
