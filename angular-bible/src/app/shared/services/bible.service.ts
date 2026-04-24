@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, shareReplay, catchError, throwError } from 'rxjs';
 
 // Environment
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
 // Interfaces
 import { Book } from '../interfaces/book';
