@@ -1,6 +1,4 @@
-<div class="header-container border-b border-gray-800">
-  <app-header (onToggleSidebar)="appSettings.toggleSidebar()"></app-header>
-</div>
+<app-header (onToggleSidebar)="appSettings.toggleSidebar()"></app-header>
 
 <p-drawer
   [visible]="appSettings.isSidebarVisible()"
@@ -15,26 +13,23 @@
   ></app-sidebar>
 </p-drawer>
 
-<main class="flex justify-between max-w-[1440px] mx-auto border-x border-gray-800 relative">
-  <div class="hidden lg:block sidebar-container border-r border-gray-800">
-    <p-scrollpanel class="h-full">
-      <app-sidebar [allBooks]="allBooks()" [selectedBook]="selectedBook()!"></app-sidebar>
-    </p-scrollpanel>
+<main class="flex justify-center max-w-[1440px] mx-auto relative">
+  <div class="hidden lg:block bg-[var(--color-parchment-100)] dark:bg-[var(--color-ink-800)]">
+    <app-sidebar [allBooks]="allBooks()" [selectedBook]="selectedBook()!"></app-sidebar>
   </div>
 
   <div class="container flex flex-col">
     <div
-      class="filters-container flex items-center justify-between gap-1 p-2 bg-gray-950/80 min-lg:px-30"
+      class="filters-container flex items-center justify-between gap-1 p-2 min-lg:px-30 bg-[var(--color-parchment-50)] dark:bg-[var(--color-ink-900)]"
     >
-      <p-button
-        styleClass="flex items-center justify-center h-10 max-md:h-7 "
+      <button
+        class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer text-white disabled:text-stone-500 disabled:cursor-not-allowed"
         [disabled]="isFirstChapter()"
         (click)="previousChapter()"
-        size="small"
       >
-        <span class="pi pi-chevron-left text-gray-800"></span>
-        <span class="hidden lg:block text-gray-800 font-semibold text-xs">Previous Chapter</span>
-      </p-button>
+        <span class="pi pi-chevron-left"></span>
+        <span class="hidden lg:block text-xs">Previous Chapter</span>
+      </button>
 
       <div class="flex items-center justify-center gap-1">
         <p-select
@@ -71,31 +66,28 @@
         </div>
       </div>
 
-      <p-button
-        styleClass="flex items-center justify-center h-10 max-md:h-7"
+      <button
+        class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer text-white disabled:text-stone-500 disabled:cursor-not-allowed"
         [disabled]="isLastChapter()"
         (click)="nextChapter()"
-        size="small"
       >
-        <span class="hidden lg:block text-gray-800 font-semibold text-xs">Next Chapter</span>
-        <span class="pi pi-chevron-right text-gray-800"></span>
-      </p-button>
+        <span class="hidden lg:block text-xs">Next Chapter</span>
+        <span class="pi pi-chevron-right"></span>
+      </button>
     </div>
 
     <div
-      class="book-chapter-container flex flex-col items-center justify-center gap-1 bg-gray-950/40"
+      class="book-chapter-container flex flex-col items-center justify-center gap-1 bg-[var(--color-parchment-50)] dark:bg-[var(--color-ink-900)]"
     >
-      <div class="flex gap-1 items-center justify-center text-lg text-emerald-500 font-bold">
-        <span class="md:block hidden">
-          <span
-            class="pi pi-question-circle cursor-pointer"
-            (click)="op.toggle($event)"
-            pTooltip="What is this book about?"
-            tooltipPosition="bottom"
-          ></span>
+      <div class="flex gap-1 items-center justify-center">
+        <span
+          class="px-4 py-0.5 uppercase bg-stone-300 text-stone-800 rounded cursor-pointer"
+          (click)="op.toggle($event)"
+          pTooltip="What is this book about?"
+          tooltipPosition="bottom"
+        >
+          {{ selectedBook()?.name }}
         </span>
-
-        <span class="mr-3"> {{ selectedBook()?.name }} </span>
       </div>
       <div>
         <span class="text-4xl"> {{ selectedChapter() }} </span>
@@ -111,7 +103,9 @@
       </div>
     </p-popover>
 
-    <p-scrollpanel class="verses-container">
+    <p-scrollpanel
+      class="verses-container bg-[var(--color-parchment-50)] dark:bg-[var(--color-ink-900)] border-t border-[var(--color-gold-600)]"
+    >
       <div class="mb-10 relative">
         @for (verse of verses(); track $index) {
           @let isBookmarked =
@@ -122,20 +116,24 @@
 
           <div class="flex items-start min-lg:px-30 py-5 px-2">
             <div class="flex px-1 ml-2 mr-5 rounded-xs">
-              <span class="text-md font-bold">
+              <span class="text-md text-[var(--color-gold-500)] font-semibold">
                 {{ verse.verse }}
               </span>
             </div>
 
             <div
               [ngClass]="{
-                bookmarked: isBookmarked,
-                'selected-verse': selectedVerse().verse === verse.verse,
+                '!bg-[var(--color-ink-800)] !font-semibold !border !border-[var(--color-gold-400)]':
+                  isBookmarked,
+                '!font-semibold': selectedVerse().verse === verse.verse,
               }"
+              class="px-2 rounded cursor-pointer hover:bg-[var(--color-ink-700)]"
               #targetElement
               (click)="openPopoverVerseActions($event, verse, targetElement)"
             >
-              <span class="md:text-lg text-xs">
+              <span
+                class="md:text-lg text-xs text-[var(--color-ink-800)] dark:text-[var(--color-parchment-100)]"
+              >
                 @for (part of verse.text | highlight: searchControl.value; track $index) {
                   @if (part.match) {
                     <mark>{{ part.text }}</mark>

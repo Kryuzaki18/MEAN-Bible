@@ -6,6 +6,9 @@ import { DatePipe, LowerCasePipe } from '@angular/common';
 // Interfaces
 import { BookmarkedVerse, Verse } from '../../interfaces/verse';
 
+// Pipes
+import { SortedDatesPipe } from '../../pipes/sorted-dates.pipes';
+
 // Services
 import { BookmarkService } from '../../services/bookmark.service';
 import { ToastService } from '../../services/toast.service';
@@ -14,13 +17,11 @@ import { ToastService } from '../../services/toast.service';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
-
-// Pipes
-import { SortedDatesPipe } from '../../pipes/sorted-dates.pipes';
+import { ScrollPanelModule } from 'primeng/scrollpanel';
 
 @Component({
   selector: 'app-bookmarks',
-  imports: [FormsModule, ButtonModule, CardModule, DatePipe, LowerCasePipe, SortedDatesPipe],
+  imports: [FormsModule, ButtonModule, CardModule, DatePipe, LowerCasePipe, SortedDatesPipe, ScrollPanelModule],
   templateUrl: './bookmarks.html',
   styleUrl: './bookmarks.scss',
   standalone: true,

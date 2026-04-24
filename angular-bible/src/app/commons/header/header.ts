@@ -38,6 +38,7 @@ export class Header {
       header: '',
       showHeader: false,
       width: '960px',
+      height: '640px',
       modal: true,
       breakpoints: {
         '960px': '75vw',

@@ -1,0 +1,14 @@
+@use 'variables' as *;
+
+.sidebar-container {
+  height: calc(100vh - #{$header-height});
+  width: $sidebar-width;
+}
+
+.sidebar-tabs {
+  height: $sidebar-tabs-height;
+}
+
+.sidebar-books {
+  height: calc(100% - #{$sidebar-tabs-height});
+}
