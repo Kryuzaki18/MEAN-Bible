@@ -2,6 +2,7 @@ import Book from "../models/books";
 import Verse from "../models/verses";
 import { booksData } from "../data/booksData";
 import { versesData } from "../data/versesData";
+import { connectDB } from '../config/db';
 
 const seedBooks = async () => {
   await Book.deleteMany({});
@@ -34,4 +35,13 @@ export const runSeed = async () => {
     console.error(err);
   }
 };
+
+const runSeedScript = async () => {
+  await connectDB();
+  await runSeed();
+  process.exit(0);
+};
+
+runSeedScript();
+
 
