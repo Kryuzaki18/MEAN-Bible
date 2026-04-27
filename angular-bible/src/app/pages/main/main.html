@@ -3,9 +3,20 @@
 <p-drawer
   [visible]="appSettings.isSidebarVisible()"
   (visibleChange)="appSettings.isSidebarVisible.set($event)"
-  header="Books"
   class="lg:hidden"
 >
+  <div
+    class="drawer-header flex items-center justify-between px-2 py-3 border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
+  >
+    <span class="text-lg font-semibold">Books</span>
+    <p-button
+      (click)="appSettings.isSidebarVisible.set(false)"
+      icon="pi pi-times"
+      [text]="true"
+      severity="danger"
+    />
+  </div>
+
   <app-sidebar
     [allBooks]="allBooks()"
     [selectedBook]="selectedBook()!"

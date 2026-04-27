@@ -19,6 +19,36 @@
 }
 
 .verses-container {
-  height: calc(100dvh - #{$header-height} - #{$filters-container-height} - #{$book-chapter-container-height});
+  height: calc(
+    100dvh - #{$header-height} - #{$filters-container-height} - #{$book-chapter-container-height}
+  );
 }
 
+:host ::ng-deep .p-drawer {
+  width: $sidebar-width;
+
+  .p-drawer-header {
+    display: none !important;
+  }
+
+  .p-drawer-content {
+    overflow: hidden;
+    padding: 0;
+  }
+
+  .sidebar-container {
+    height: 100dvh;
+  }
+
+  .drawer-header {
+    height: $header-height;
+  }
+
+  .sidebar-tabs {
+    height: $header-height;
+  }
+
+  .sidebar-books {
+    height: calc(100dvh - #{$header-height} - #{$header-height});
+  }
+}
