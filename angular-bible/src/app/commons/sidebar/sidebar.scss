@@ -1,7 +1,7 @@
 @use 'variables' as *;
 
 .sidebar-container {
-  height: calc(100vh - #{$header-height});
+  height: calc(100dvh - #{$header-height});
   width: $sidebar-width;
 }
 
