@@ -1,8 +1,4 @@
-import { Component, computed, inject, output } from '@angular/core';
-
-// PrimeNG Modules
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { ButtonModule } from 'primeng/button';
+import { Component, inject } from '@angular/core';
 
 // Services
 import { AppSettingsService } from '../../shared/services/app-settings.service';
@@ -10,6 +6,10 @@ import { BookmarkService } from '../../shared/services/bookmark.service';
 
 // Dialogs
 import { Bookmarks } from '../../shared/dialog/bookmarks/bookmarks';
+
+// PrimeNG Modules
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-header',
@@ -22,8 +22,6 @@ export class Header {
   dialogService = inject(DialogService);
   bookmarkService = inject(BookmarkService);
   appSettingsService = inject(AppSettingsService);
-
-  onToggleSidebar = output<void>();
 
   ref: DynamicDialogRef | undefined;
 

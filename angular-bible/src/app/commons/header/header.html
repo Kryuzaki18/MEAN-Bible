@@ -7,7 +7,7 @@
     <div class="flex items-center justify-between w-full">
       <p-button
         icon="pi pi-bars"
-        (click)="onToggleSidebar.emit()"
+        (click)="appSettingsService.toggleSidebar()"
         class="lg:hidden"
         [text]="true"
         severity="secondary"
