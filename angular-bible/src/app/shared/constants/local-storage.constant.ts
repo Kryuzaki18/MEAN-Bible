@@ -1,3 +1,4 @@
-export const LocalStorageKeys = {
+export const storage = {
   BOOKMARKS: 'bookmarks',
+  DARK_MODE: 'dark',
 };

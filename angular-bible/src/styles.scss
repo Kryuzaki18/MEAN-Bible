@@ -3,54 +3,7 @@
 @use 'tailwindcss';
 @import 'primeicons/primeicons.css';
 
-:root {
-  /* Parchment — warm aged paper */
-  --color-parchment-50:  #fefcf8;
-  --color-parchment-100: #fdf9f0;
-  --color-parchment-200: #faf3e0;
-  --color-parchment-300: #f5e6c8;
-  --color-parchment-400: #edcf9a;
-  --color-parchment-500: #e0b46a;
-  --color-parchment-600: #c8963e;
-  --color-parchment-700: #a67830;
-  --color-parchment-800: #7a5520;
-  --color-parchment-900: #4e3412;
-
-  /* Ink — deep warm brown */
-  --color-ink-50:  #f5f0eb;
-  --color-ink-100: #e8ddd2;
-  --color-ink-200: #d4bca4;
-  --color-ink-300: #b89278;
-  --color-ink-400: #9c6e52;
-  --color-ink-500: #7a5038;
-  --color-ink-600: #5e3a28;
-  --color-ink-700: #3d2b1a;
-  --color-ink-800: #2c1f0e;
-  --color-ink-900: #1a1208;
-
-  /* Gold — sacred accent */
-  --color-gold-50:  #fdf8ec;
-  --color-gold-100: #faefd0;
-  --color-gold-200: #f5d88a;
-  --color-gold-300: #efc158;
-  --color-gold-400: #e0a030;
-  --color-gold-500: #c9922a;  
-  --color-gold-600: #b07d20;
-  --color-gold-700: #8f6418;
-  --color-gold-800: #664610;
-  --color-gold-900: #3d2908;
-}
-
-.dark {
-  --color-parchment-50:  var(--color-ink-900);
-  --color-parchment-100: var(--color-ink-800);
-  --color-parchment-200: var(--color-ink-700);
-  --color-parchment-300: var(--color-ink-600);
-
-  --color-ink-700: var(--color-parchment-300);
-  --color-ink-800: var(--color-parchment-200);
-  --color-ink-900: var(--color-parchment-50);
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 html,
 body {
@@ -60,5 +13,4 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: var(--color-ink-700);
 }

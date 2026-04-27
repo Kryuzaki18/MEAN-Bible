@@ -13,17 +13,19 @@
   ></app-sidebar>
 </p-drawer>
 
-<main class="flex justify-center max-w-[1440px] mx-auto relative">
-  <div class="hidden lg:block bg-[var(--color-parchment-100)] dark:bg-[var(--color-ink-800)]">
+<main
+  class="flex justify-center max-w-[1440px] mx-auto relative border-x border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
+>
+  <div class="hidden lg:block bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-800)]">
     <app-sidebar [allBooks]="allBooks()" [selectedBook]="selectedBook()!"></app-sidebar>
   </div>
 
   <div class="container flex flex-col">
     <div
-      class="filters-container flex items-center justify-between gap-1 p-2 min-lg:px-30 bg-[var(--color-parchment-50)] dark:bg-[var(--color-ink-900)]"
+      class="filters-container flex items-center justify-between gap-1 p-2 min-lg:px-30 dark:bg-[var(--p-primary-900)]"
     >
       <button
-        class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer text-white disabled:text-stone-500 disabled:cursor-not-allowed"
+        class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer disabled:text-stone-500 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
         [disabled]="isFirstChapter()"
         (click)="previousChapter()"
       >
@@ -67,7 +69,7 @@
       </div>
 
       <button
-        class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer text-white disabled:text-stone-500 disabled:cursor-not-allowed"
+        class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer disabled:text-stone-500 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
         [disabled]="isLastChapter()"
         (click)="nextChapter()"
       >
@@ -77,11 +79,11 @@
     </div>
 
     <div
-      class="book-chapter-container flex flex-col items-center justify-center gap-1 bg-[var(--color-parchment-50)] dark:bg-[var(--color-ink-900)]"
+      class="book-chapter-container flex flex-col items-center justify-center dark:bg-[var(--p-primary-900)]"
     >
-      <div class="flex gap-1 items-center justify-center">
+      <div class="flex items-center justify-center">
         <span
-          class="px-4 py-0.5 uppercase bg-stone-300 text-stone-800 rounded cursor-pointer"
+          class="px-4 py-0.5 uppercase text-sm lg:text-lg font-semibold bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
           (click)="op.toggle($event)"
           pTooltip="What is this book about?"
           tooltipPosition="bottom"
@@ -90,10 +92,18 @@
         </span>
       </div>
       <div>
-        <span class="text-4xl"> {{ selectedChapter() }} </span>
+        <span
+          class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-lg lg:text-4xl"
+        >
+          {{ selectedChapter() }}
+        </span>
       </div>
       <div>
-        <span class="text-lg"> Chapter </span>
+        <span
+          class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-sm lg:text-lg"
+        >
+          Chapter
+        </span>
       </div>
     </div>
 
@@ -103,9 +113,7 @@
       </div>
     </p-popover>
 
-    <p-scrollpanel
-      class="verses-container bg-[var(--color-parchment-50)] dark:bg-[var(--color-ink-900)] border-t border-[var(--color-gold-600)]"
-    >
+    <p-scrollpanel class="verses-container dark:bg-[var(--p-primary-950)]">
       <div class="mb-10 relative">
         @for (verse of verses(); track $index) {
           @let isBookmarked =
@@ -114,26 +122,26 @@
             item.book === verse.book && +item.chapter === +verse.chapter && +item.verse === +verse.verse
         );
 
-          <div class="flex items-start min-lg:px-30 py-5 px-2">
+          <div class="flex items-start min-lg:px-30 p-2">
             <div class="flex px-1 ml-2 mr-5 rounded-xs">
-              <span class="text-md text-[var(--color-gold-500)] font-semibold">
+              <span
+                class="text-md text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] font-semibold"
+              >
                 {{ verse.verse }}
               </span>
             </div>
 
             <div
               [ngClass]="{
-                '!bg-[var(--color-ink-800)] !font-semibold !border !border-[var(--color-gold-400)]':
+                'bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-800)] border !font-semibold':
                   isBookmarked,
-                '!font-semibold': selectedVerse().verse === verse.verse,
+                'font-semibold': selectedVerse().verse === verse.verse,
               }"
-              class="px-2 rounded cursor-pointer hover:bg-[var(--color-ink-700)]"
+              class="px-2 rounded cursor-pointer text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-light"
               #targetElement
               (click)="openPopoverVerseActions($event, verse, targetElement)"
             >
-              <span
-                class="md:text-lg text-xs text-[var(--color-ink-800)] dark:text-[var(--color-parchment-100)]"
-              >
+              <span class="md:text-lg text-xs">
                 @for (part of verse.text | highlight: searchControl.value; track $index) {
                   @if (part.match) {
                     <mark>{{ part.text }}</mark>
@@ -157,7 +165,7 @@
 
             <div class="flex gap-1">
               <button
-                class="cursor-pointer bg-green-500/50 hover:bg-green-700 text-xs px-5 py-2 rounded"
+                class="cursor-pointer bg-green-500/20 hover:bg-green-700/20 text-xs px-5 py-2 rounded"
                 (click)="copyVerse(); popoverVerseActions.hide()"
               >
                 📋 Copy
@@ -165,14 +173,14 @@
 
               @if (isBookmarked()) {
                 <button
-                  class="cursor-pointer bg-red-500/50 hover:bg-red-700 text-xs px-5 py-2 rounded"
+                  class="cursor-pointer bg-red-500/20 hover:bg-red-700/20 text-xs px-5 py-2 rounded"
                   (click)="removeBookmarked(); popoverVerseActions.hide()"
                 >
                   ❌ Remove
                 </button>
               } @else {
                 <button
-                  class="cursor-pointer bg-green-500/50 hover:bg-green-700 text-xs px-5 py-2 rounded"
+                  class="cursor-pointer bg-green-500/20 hover:bg-green-700/20 text-xs px-5 py-2 rounded"
                   (click)="addBookmark(); popoverVerseActions.hide()"
                 >
                   🔖 Bookmark

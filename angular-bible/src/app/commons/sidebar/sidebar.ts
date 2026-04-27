@@ -1,6 +1,7 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 // Interfaces
 import { Book } from '../../shared/interfaces/book';
@@ -11,10 +12,18 @@ import { AppSettingsService } from '../../shared/services/app-settings.service';
 // PrimeNG Modules
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterModule, NgClass, ButtonModule, ScrollPanelModule],
+  imports: [
+    RouterModule,
+    NgClass,
+    ButtonModule,
+    ScrollPanelModule,
+    SelectButtonModule,
+    FormsModule,
+  ],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
@@ -26,6 +35,11 @@ export class Sidebar {
   isSidebarVisible = computed(() => this.appSettings.isSidebarVisible);
 
   testament = signal<number>(0);
+
+  readonly testaments = [
+    { label: 'Old', value: 0 },
+    { label: 'New', value: 1 },
+  ];
 
   filteredBooks = computed(() => {
     if (this.testament() === 0) {

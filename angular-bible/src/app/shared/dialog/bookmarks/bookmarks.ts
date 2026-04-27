@@ -18,10 +18,20 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-bookmarks',
-  imports: [FormsModule, ButtonModule, CardModule, DatePipe, LowerCasePipe, SortedDatesPipe, ScrollPanelModule],
+  imports: [
+    FormsModule,
+    ButtonModule,
+    CardModule,
+    DatePipe,
+    LowerCasePipe,
+    SortedDatesPipe,
+    ScrollPanelModule,
+    TooltipModule,
+  ],
   templateUrl: './bookmarks.html',
   styleUrl: './bookmarks.scss',
   standalone: true,

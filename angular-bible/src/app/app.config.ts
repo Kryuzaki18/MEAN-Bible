@@ -2,10 +2,10 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 
-import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 import { DialogService } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
+import preset from './preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,7 +13,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: preset,
+        options: {
+          darkModeSelector: '.dark',
+        },
       },
     }),
     DialogService,

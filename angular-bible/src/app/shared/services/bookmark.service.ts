@@ -4,7 +4,7 @@ import { inject, Injectable } from '@angular/core';
 import { BookmarkedVerse, Verse } from '../interfaces/verse';
 
 // Constants
-import { LocalStorageKeys } from '../constants/local-storage.constant';
+import { storage } from '../constants/local-storage.constant';
 
 // Services
 import { LocalStorageService } from '../../shared/services/local-storage.service';
@@ -18,7 +18,7 @@ export class BookmarkService {
   private readonly maxBookmarks: number = 30;
 
   bookmarks = this.localStorageService.getLocalStorageSignal<BookmarkedVerse[]>(
-    LocalStorageKeys.BOOKMARKS,
+    storage.BOOKMARKS,
     [],
   );
 
@@ -47,7 +47,7 @@ export class BookmarkService {
         ...this.bookmarks(),
       ];
 
-      this.localStorageService.updateLocalStorageSignal(LocalStorageKeys.BOOKMARKS, newBookmark);
+      this.localStorageService.updateLocalStorageSignal(storage.BOOKMARKS, newBookmark);
       this.toastService.success(`${book} ${chapter}:${verse}`, `has been added to bookmarks.`);
     }
   }
@@ -66,7 +66,7 @@ export class BookmarkService {
         ),
     );
     this.localStorageService.updateLocalStorageSignal(
-      LocalStorageKeys.BOOKMARKS,
+      storage.BOOKMARKS,
       updatedBookmarked,
     );
   }

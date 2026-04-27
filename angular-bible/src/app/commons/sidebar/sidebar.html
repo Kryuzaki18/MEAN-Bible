@@ -1,36 +1,27 @@
 <aside class="sidebar-container flex flex-col">
-  <div class="sidebar-tabs flex items-center gap-2 py-1.5 px-3">
-    <button
-      type="button"
-      class="w-full px-2 py-1 border border-stone-600 hover:border-stone-700 hover:bg-stone-700 hover:text-stone-100 rounded cursor-pointer text-xs"
-      [ngClass]="{
-        'bg-stone-600': testament() === 0,
-        'bg-stone-800 text-stone-400': testament() === 1,
-      }"
-      (click)="updateTestament(0)"
-    >
-      Old
-    </button>
-
-    <button
-      type="button"
-      class="w-full px-2 py-1 border border-stone-600 hover:border-stone-700 hover:bg-stone-700 hover:text-stone-100 rounded cursor-pointer text-xs"
-      [ngClass]="{
-        'bg-stone-600': testament() === 1,
-        'bg-stone-800  text-stone-400': testament() === 0,
-      }"
-      (click)="updateTestament(1)"
-    >
-      New
-    </button>
+  <div
+    class="sidebar-tabs flex items-center gap-2 px-2 text-[var(--p-primary-50)] dark:text-[var(--p-primary-100)] font-semibold"
+  >
+    <p-selectbutton
+      [allowEmpty]="false"
+      [options]="testaments"
+      optionLabel="label"
+      optionValue="value"
+      dataKey="value"
+      size="small"
+      class="text-xs"
+      fluid
+      [(ngModel)]="testament"
+      (onChange)="updateTestament($event.value)"
+    />
   </div>
 
   <p-scrollpanel class="sidebar-books">
     @for (book of filteredBooks(); track $index) {
       <div
-        class="flex items-center gap-3 py-1.5 px-2 w-full cursor-pointer hover:bg-stone-500 font-light"
+        class="flex items-center gap-3 py-1.5 px-2 w-full cursor-pointer font-light hover:bg-[var(--p-primary-100)] dark:hover:bg-[var(--p-primary-400)] hover:text-[var(--p-primary-600)] dark:hover:text-[var(--p-primary-50)]"
         [ngClass]="{
-          'bg-[var(--color-gold-500)] text-[var(--color-parchment-50)]':
+          'bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-500)] text-[var(--p-primary-600)] dark:text-[var(--p-primary-50)] font-semibold':
             book.name === selectedBook().name,
         }"
         (click)="navigateToBook(book.name)"

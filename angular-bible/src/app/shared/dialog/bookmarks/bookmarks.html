@@ -1,10 +1,10 @@
 <div class="flex flex-col h-full">
   <div class="flex justify-between my-4">
-    <h2 class="flex items-center gap-2">
-      <span>My Bookmarks</span>
+    <h2 class="flex items-center gap-2 font-bold">
+      <span class="text-[var(--p-primary-700)] dark:text-[var(--p-primary-100)]">My Bookmarks</span>
       @if (bookmarks().length > 0) {
         <span
-          class="bg-stone-500 text-white rounded py-0.5 px-1.5 flex items-center justify-center text-[10px]"
+          class="bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-600)] text-[var(--p-primary-700)] dark:text-[var(--p-primary-100)] rounded py-0.5 px-1.5 flex items-center justify-center text-xs"
         >
           {{ bookmarks().length }}
         </span>
@@ -16,39 +16,49 @@
   <p-scrollpanel class="px-2" style="width: 100%; max-height: 580px">
     @for (bookmark of bookmarks() | sortedDates; track $index) {
       <div
-        class="border-dashed border-b border-gray-700 py-3"
+        class="font-light border-dashed border-b border-[var(--p-primary-500)] dark:border-[var(--p-primary-700)] py-3"
         [class.border-none]="$index === bookmarks().length - 1"
       >
-        <div class="text-sm underline cursor-pointer" (click)="navigateBookmark(bookmark)">
-          "Book of <span class="text-emerald-600 font-bold">{{ bookmark.book }}</span
-          >" Chapter
-          <span class="text-emerald-600 font-bold">{{ bookmark.chapter }}</span>
+        <div class="text-sm tracking-widest">
+          <span
+            class="font-bold text-[var(--p-primary-500)] dark:text-[var(--p-primary-50)] underline cursor-pointer"
+            (click)="navigateBookmark(bookmark)"
+            >"{{ bookmark.book }}"</span
+          >
+          Chapter
+          <span class="font-bold text-[var(--p-primary-500)] dark:text-[var(--p-primary-50)]">{{
+            bookmark.chapter
+          }}</span>
         </div>
-        <div class="flex items-center justify-between max-lg:flex-col max-lg:items-start">
+
+        <div class="flex items-center justify-between max-sm:flex-col max-sm:items-start">
           <div class="flex flex-col items-start">
             <div class="flex items-start">
-              <div
-                class="flex items-center justify-center text-center bg-white px-1 mr-2 mt-1.5 rounded-xs"
-              >
-                <span class="text-emerald-800 text-xs font-bold">
+              <div class="flex items-center justify-center text-center mr-2 mt-1.5">
+                <span
+                  class="text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] text-xs font-bold"
+                >
                   {{ bookmark.verse }}
                 </span>
               </div>
               <div>
-                <span class="text-xs">{{ bookmark.text }}</span>
+                <span
+                  class="text-xs text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] font-light"
+                  >{{ bookmark.text }}</span
+                >
               </div>
             </div>
 
-            <span class="text-[10px] mt-1 text-gray-400 italic"
+            <span class="text-[10px] mt-1 text-gray-500 dark:text-gray-300 italic"
               >{{ bookmark.dateAdded | date: 'MMM d, y h:mm'
               }}{{ bookmark.dateAdded | date: 'a' | lowercase }}</span
             >
           </div>
 
-          <div class="w-100 flex justify-end max-lg:justify-center max-lg:w-full">
-            <div class="flex flex-col gap-2 max-lg:flex-row max-lg:mt-2">
+          <div class="w-20 flex justify-end max-sm:justify-center max-sm:w-full">
+            <div class="flex flex-col gap-4 max-sm:flex-row max-sm:mt-2">
               <button
-                class="cursor-pointer bg-green-500/50 hover:bg-green-700 text-xs px-5 py-2 rounded"
+                class="cursor-pointer text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] py-1 px-1.5"
                 (click)="copyVerse(bookmark)"
               >
                 @if (
@@ -56,17 +66,27 @@
                   selectedCopyVerse()?.chapter === bookmark.chapter &&
                   selectedCopyVerse()?.verse === bookmark.verse
                 ) {
-                  ✔️ Copied
+                  <span class="pi pi-check text-green-400"></span>
                 } @else {
-                  📋 Copy
+                  <span
+                    class="pi pi-copy text-green-400 hover:text-green-500"
+                    pTooltip="Copy verse"
+                    tooltipPosition="bottom"
+                    tooltipStyleClass="text-xs"
+                  ></span>
                 }
               </button>
 
               <button
-                class="cursor-pointer bg-red-500/50 hover:bg-red-700 text-xs px-5 py-2 rounded"
+                class="cursor-pointer text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] py-1 px-1.5"
                 (click)="removeBookmarked(bookmark)"
               >
-                ❌ Remove
+                <span
+                  class="pi pi-trash text-red-400 hover:text-red-500"
+                  pTooltip="Remove bookmark"
+                  tooltipPosition="bottom"
+                  tooltipStyleClass="text-xs"
+                ></span>
               </button>
             </div>
           </div>
