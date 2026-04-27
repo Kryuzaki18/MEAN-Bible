@@ -35,7 +35,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { ScrollTopModule } from 'primeng/scrolltop';
 import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { Popover } from 'primeng/popover';
@@ -58,7 +57,6 @@ import { AppSettingsService } from '../../shared/services/app-settings.service';
     ButtonModule,
     SelectModule,
     ScrollPanelModule,
-    ScrollTopModule,
     PopoverModule,
     TooltipModule,
     HighlightPipe,

@@ -14,7 +14,7 @@
 </p-drawer>
 
 <main
-  class="flex justify-center max-w-[1440px] mx-auto relative border-x border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
+  class="flex justify-center max-w-[1440px] mx-auto relative 2xl:border-x border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
 >
   <div class="hidden lg:block bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-800)]">
     <app-sidebar [allBooks]="allBooks()" [selectedBook]="selectedBook()!"></app-sidebar>
@@ -114,89 +114,80 @@
     </p-popover>
 
     <p-scrollpanel class="verses-container dark:bg-[var(--p-primary-950)]">
-      <div class="mb-10 relative">
-        @for (verse of verses(); track $index) {
-          @let isBookmarked =
-            bookmarkService.bookmarks().find(
+      @for (verse of verses(); track $index) {
+        @let isBookmarked =
+          bookmarkService.bookmarks().find(
           (item) =>
             item.book === verse.book && +item.chapter === +verse.chapter && +item.verse === +verse.verse
         );
 
-          <div class="flex items-start min-lg:px-30 p-2">
-            <div class="flex px-1 ml-2 mr-5 rounded-xs">
-              <span
-                class="text-md text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] font-semibold"
-              >
-                {{ verse.verse }}
-              </span>
-            </div>
-
-            <div
-              [ngClass]="{
-                'bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-800)] border !font-semibold':
-                  isBookmarked,
-                'font-semibold': selectedVerse().verse === verse.verse,
-              }"
-              class="px-2 rounded cursor-pointer text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-light"
-              #targetElement
-              (click)="openPopoverVerseActions($event, verse, targetElement)"
+        <div class="flex items-start min-lg:px-30 p-2">
+          <div class="flex px-1 ml-2 mr-5 rounded-xs">
+            <span
+              class="text-md text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] font-semibold"
             >
-              <span class="md:text-lg text-xs">
-                @for (part of verse.text | highlight: searchControl.value; track $index) {
-                  @if (part.match) {
-                    <mark>{{ part.text }}</mark>
-                  } @else {
-                    {{ part.text }}
-                  }
-                }
-              </span>
-            </div>
+              {{ verse.verse }}
+            </span>
           </div>
-        }
 
-        <p-popover #popoverVerseActions [dismissable]="true">
-          @if (selectedVerse()) {
+          <div
+            [ngClass]="{
+              'bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-800)] border !font-semibold':
+                isBookmarked,
+              'font-semibold': selectedVerse().verse === verse.verse,
+            }"
+            class="px-2 rounded cursor-pointer text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-light"
+            #targetElement
+            (click)="openPopoverVerseActions($event, verse, targetElement)"
+          >
+            <span class="md:text-lg text-xs">
+              @for (part of verse.text | highlight: searchControl.value; track $index) {
+                @if (part.match) {
+                  <mark>{{ part.text }}</mark>
+                } @else {
+                  {{ part.text }}
+                }
+              }
+            </span>
+          </div>
+        </div>
+      }
+
+      <p-popover #popoverVerseActions [dismissable]="true">
+        @if (selectedVerse()) {
+          <button
+            class="absolute right-0 top-0 -mr-2 -mt-3 rounded-full w-5 h-5 leading-4 text-center bg-red-800 cursor-pointer"
+            (click)="popoverVerseActions.hide()"
+          >
+            <span class="pi pi-times text-white" style="font-size: 0.7rem"></span>
+          </button>
+
+          <div class="flex gap-1">
             <button
-              class="absolute right-0 top-0 -mr-2 -mt-3 rounded-full w-5 h-5 leading-4 text-center bg-red-800 cursor-pointer"
-              (click)="popoverVerseActions.hide()"
+              class="cursor-pointer bg-green-500/20 hover:bg-green-700/20 text-xs px-5 py-2 rounded"
+              (click)="copyVerse(); popoverVerseActions.hide()"
             >
-              <span class="pi pi-times text-white" style="font-size: 0.7rem"></span>
+              📋 Copy
             </button>
 
-            <div class="flex gap-1">
+            @if (isBookmarked()) {
+              <button
+                class="cursor-pointer bg-red-500/20 hover:bg-red-700/20 text-xs px-5 py-2 rounded"
+                (click)="removeBookmarked(); popoverVerseActions.hide()"
+              >
+                ❌ Remove
+              </button>
+            } @else {
               <button
                 class="cursor-pointer bg-green-500/20 hover:bg-green-700/20 text-xs px-5 py-2 rounded"
-                (click)="copyVerse(); popoverVerseActions.hide()"
+                (click)="addBookmark(); popoverVerseActions.hide()"
               >
-                📋 Copy
+                🔖 Bookmark
               </button>
-
-              @if (isBookmarked()) {
-                <button
-                  class="cursor-pointer bg-red-500/20 hover:bg-red-700/20 text-xs px-5 py-2 rounded"
-                  (click)="removeBookmarked(); popoverVerseActions.hide()"
-                >
-                  ❌ Remove
-                </button>
-              } @else {
-                <button
-                  class="cursor-pointer bg-green-500/20 hover:bg-green-700/20 text-xs px-5 py-2 rounded"
-                  (click)="addBookmark(); popoverVerseActions.hide()"
-                >
-                  🔖 Bookmark
-                </button>
-              }
-            </div>
-          }
-        </p-popover>
-      </div>
-
-      <!-- <p-scrolltop
-        target="parent"
-        [threshold]="100"
-        icon="pi pi-arrow-up"
-        [buttonProps]="{ severity: 'contrast', raised: true, rounded: true }"
-      /> -->
+            }
+          </div>
+        }
+      </p-popover>
     </p-scrollpanel>
   </div>
 </main>

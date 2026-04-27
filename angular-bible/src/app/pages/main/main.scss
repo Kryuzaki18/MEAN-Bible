@@ -19,6 +19,6 @@
 }
 
 .verses-container {
-  height: calc(100vh - #{$filters-container-height} - #{$book-chapter-container-height});
+  height: calc(100vh - #{$filters-container-height} - #{$book-chapter-container-height} - 65px);
 }
 
