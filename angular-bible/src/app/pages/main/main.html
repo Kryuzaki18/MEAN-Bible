@@ -9,12 +9,10 @@
     class="drawer-header flex items-center justify-between px-2 py-3 border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
   >
     <span class="text-lg font-semibold">Books</span>
-    <p-button
+    <span
+      class="pi pi-times cursor-pointer text-red-500 px-2"
       (click)="appSettings.isSidebarVisible.set(false)"
-      icon="pi pi-times"
-      [text]="true"
-      severity="danger"
-    />
+    ></span>
   </div>
 
   <app-sidebar
