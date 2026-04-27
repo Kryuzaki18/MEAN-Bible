@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
 
 // Services
 import { AppSettingsService } from '../../shared/services/app-settings.service';
@@ -13,7 +14,7 @@ import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-header',
-  imports: [ButtonModule],
+  imports: [NgClass, ButtonModule],
   templateUrl: './header.html',
   styleUrl: './header.scss',
   standalone: true,

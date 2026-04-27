@@ -17,7 +17,11 @@
         (click)="show()"
       >
         <span
-          class="pi pi-bookmark text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+          class="pi text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+          [ngClass]="{
+            'pi-bookmark-fill': bookmarks().length > 0,
+            'pi-bookmark': bookmarks().length === 0,
+          }"
         ></span>
         <span class="text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
           >Bookmarks</span
