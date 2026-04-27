@@ -113,7 +113,7 @@
       </div>
     </p-popover>
 
-    <p-scrollpanel class="verses-container dark:bg-[var(--p-primary-950)]">
+    <p-scrollpanel class="verses-container dark:bg-[var(--p-primary-950)] pb-10">
       @for (verse of verses(); track $index) {
         @let isBookmarked =
           bookmarkService.bookmarks().find(
