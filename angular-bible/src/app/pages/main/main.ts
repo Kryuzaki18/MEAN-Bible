@@ -29,6 +29,7 @@ import { Book } from '../../shared/interfaces/book';
 import { BibleService } from '../../shared/services/bible.service';
 import { BookmarkService } from '../../shared/services/bookmark.service';
 import { ToastService } from '../../shared/services/toast.service';
+import { AppSettingsService } from '../../shared/services/app-settings.service';
 
 // PrimeNG Modules
 import { InputTextModule } from 'primeng/inputtext';
@@ -41,9 +42,6 @@ import { Popover } from 'primeng/popover';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { DrawerModule } from 'primeng/drawer';
-
-// Services
-import { AppSettingsService } from '../../shared/services/app-settings.service';
 
 @Component({
   selector: 'app-main',
@@ -69,31 +67,36 @@ import { AppSettingsService } from '../../shared/services/app-settings.service';
   standalone: true,
 })
 export class Main implements OnInit {
-  appSettings = inject(AppSettingsService);
+  private readonly router = inject(Router);
+  private readonly bibleService = inject(BibleService);
+  private readonly toastService = inject(ToastService);
+  private readonly route = inject(ActivatedRoute);
+  readonly appSettings = inject(AppSettingsService);
+  readonly bookmarkService = inject(BookmarkService);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild('popoverVerseActions') popoverVerseActions!: Popover;
-  route = inject(ActivatedRoute);
 
-  searchControl = new FormControl('');
+  readonly searchControl = new FormControl('');
+  readonly defaultBook = 'Genesis';
 
-  defaultBook: string = 'Genesis';
+  readonly allBooks = signal<Book[]>([]);
+  readonly selectedChapter = signal<number>(1);
+  readonly verses = signal<Verse[]>([]);
+  readonly selectedVerse = signal<Verse>({} as Verse);
+  readonly queryParams = toSignal(this.route.queryParamMap);
 
-  allBooks = signal<Book[]>([]);
-  selectedChapter = signal<number>(1);
-  initialVerses: Verse[] = [];
-  verses = signal<Verse[]>([]);
-  selectedVerse = signal<Verse>({} as Verse);
-  queryParams = toSignal(this.route.queryParamMap);
+  private initialVerses: Verse[] = [];
 
-  isFirstChapter = computed(() => this.selectedChapter() === 1);
-  isLastChapter = computed(() => this.selectedChapter() === this.chapters().length);
+  readonly isFirstChapter = computed(() => this.selectedChapter() === 1);
+  readonly isLastChapter = computed(() => this.selectedChapter() === this.chapters().length);
 
-  selectedBook = computed(() => {
+  readonly selectedBook = computed(() => {
     const newBook = this.queryParams()?.get('book') || this.defaultBook;
     return this.allBooks().find((b) => b.name.toLowerCase() === newBook.toLowerCase());
   });
 
-  chapters = computed(() => {
+  readonly chapters = computed(() => {
     const book = this.selectedBook();
     const totalChapters = book?.chapters;
     if (totalChapters) {
@@ -105,26 +108,20 @@ export class Main implements OnInit {
     return [];
   });
 
-  isBookmarked = computed(() => {
+  readonly isBookmarked = computed(() => {
     const bookmarks = this.bookmarkService.bookmarks();
     const isBookmarked = bookmarks.find(
       (item) =>
         item.book === this.selectedVerse().book &&
         +item.chapter === +this.selectedVerse().chapter &&
-        +item.verse === +this.selectedVerse().verse
+        +item.verse === +this.selectedVerse().verse,
     );
 
     return !!isBookmarked;
   });
 
-  bookmarkService = inject(BookmarkService);
-  private destroyRef = inject(DestroyRef);
 
-  constructor(
-    private router: Router,
-    private bibleService: BibleService,
-    private toastService: ToastService,
-  ) {
+  constructor() {
     effect(() => {
       const book = this.selectedBook();
       const selectedChapter = this.selectedChapter();

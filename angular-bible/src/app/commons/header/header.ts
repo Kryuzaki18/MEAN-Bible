@@ -19,9 +19,9 @@ import { ButtonModule } from 'primeng/button';
   standalone: true,
 })
 export class Header {
-  dialogService = inject(DialogService);
-  bookmarkService = inject(BookmarkService);
-  appSettingsService = inject(AppSettingsService);
+  private readonly dialogService = inject(DialogService);
+  private readonly bookmarkService = inject(BookmarkService);
+  readonly appSettingsService = inject(AppSettingsService);
 
   ref: DynamicDialogRef | undefined;
 

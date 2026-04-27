@@ -28,28 +28,28 @@ import { SelectButtonModule } from 'primeng/selectbutton';
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
-  selectedBook = input<Book>({} as Book);
-  allBooks = input<Book[]>([]);
-  onBookSelected = output<string>();
+  private readonly appSettings = inject(AppSettingsService);
+  private readonly router = inject(Router);
 
-  isSidebarVisible = computed(() => this.appSettings.isSidebarVisible);
+  readonly selectedBook = input<Book>({} as Book);
+  readonly allBooks = input<Book[]>([]);
+  readonly onBookSelected = output<string>();
 
-  testament = signal<number>(0);
+  readonly testament = signal<number>(0);
+
+  readonly isSidebarVisible = computed(() => this.appSettings.isSidebarVisible);
 
   readonly testaments = [
     { label: 'Old', value: 0 },
     { label: 'New', value: 1 },
   ];
 
-  filteredBooks = computed(() => {
+  readonly filteredBooks = computed(() => {
     if (this.testament() === 0) {
       return this.allBooks().filter((book) => book.testament.toLowerCase() === 'old');
     }
     return this.allBooks().filter((book) => book.testament.toLowerCase() === 'new');
   });
-
-  private appSettings = inject(AppSettingsService);
-  private router = inject(Router);
 
   onDrawerClose(): void {
     this.appSettings.toggleSidebar();

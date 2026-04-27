@@ -37,10 +37,10 @@ import { TooltipModule } from 'primeng/tooltip';
   standalone: true,
 })
 export class Bookmarks {
-  private bookmarkService = inject(BookmarkService);
+  private readonly bookmarkService = inject(BookmarkService);
 
-  bookmarks = this.bookmarkService.bookmarks;
-  selectedCopyVerse = signal<Verse | null>(null);
+  readonly bookmarks = this.bookmarkService.bookmarks;
+  readonly selectedCopyVerse = signal<Verse | null>(null);
 
   constructor(
     public ref: DynamicDialogRef,
