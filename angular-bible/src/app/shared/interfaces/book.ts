@@ -11,5 +11,6 @@ export interface Book {
 export interface LastRead {
   book: string;
   chapter: number;
+  verse: number;
   date?: Date;
 }

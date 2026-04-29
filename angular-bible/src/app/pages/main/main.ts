@@ -3,10 +3,13 @@ import {
   computed,
   DestroyRef,
   effect,
+  ElementRef,
   inject,
   OnInit,
+  QueryList,
   signal,
   ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -81,6 +84,7 @@ export class Main implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   @ViewChild('popoverVerseActions') popoverVerseActions!: Popover;
+  @ViewChildren('versesList') versesList!: QueryList<ElementRef>;
 
   readonly searchControl = new FormControl('');
   readonly defaultBook = 'Genesis';
@@ -95,7 +99,7 @@ export class Main implements OnInit {
 
   private readonly lastRead = this.localStorageService.getLocalStorageSignal<LastRead>(
     storage.LAST_READ,
-    { book: this.defaultBook, chapter: this.selectedChapter(), date: new Date() },
+    { book: this.defaultBook, chapter: this.selectedChapter(), verse: 1, date: new Date() },
   );
 
   readonly isFirstChapter = computed(() => this.selectedChapter() === 1);
@@ -147,6 +151,20 @@ export class Main implements OnInit {
       const raw = parseInt(params.get('chapter') ?? '1', 10);
       this.selectedChapter.set(isNaN(raw) || raw < 1 ? 1 : raw);
       this.clearSearch();
+
+      const lastRead = this.lastRead();
+      if (lastRead) {
+        this.router.navigate(['/home'], {
+          queryParams: {
+            book: lastRead.book,
+            chapter: lastRead.chapter,
+          },
+        });
+
+        setTimeout(() => {
+          this.scrollToVerses(lastRead);
+        }, 100);
+      }
     });
 
     this.searchControl.valueChanges
@@ -154,16 +172,12 @@ export class Main implements OnInit {
       .subscribe((value) => {
         this.onSearch(value ?? '');
       });
+  }
 
-    const lastRead = this.lastRead();
-    if (lastRead) {
-      this.router.navigate(['/home'], {
-        queryParams: {
-          book: lastRead.book,
-          chapter: lastRead.chapter,
-        },
-      });
-    }
+  scrollToVerses(lastRead: LastRead): void {
+    const index = this.verses().findIndex((v) => v.verse === lastRead.verse);
+    const verseEl = this.versesList.get(index);
+    verseEl?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   openPopoverVerseActions(event: MouseEvent, verse: Verse, target: HTMLElement): void {
@@ -218,6 +232,7 @@ export class Main implements OnInit {
       this.appSettings.setLastRead({
         book: this.selectedBook()?.name || this.defaultBook,
         chapter: newChapter,
+        verse: 1,
       });
       this.selectChapter(newChapter);
     }
@@ -231,6 +246,7 @@ export class Main implements OnInit {
       this.appSettings.setLastRead({
         book: this.selectedBook()?.name || this.defaultBook,
         chapter: newChapter,
+        verse: 1,
       });
       this.selectChapter(newChapter);
     }
@@ -247,6 +263,7 @@ export class Main implements OnInit {
     this.appSettings.setLastRead({
       book: this.selectedBook()?.name || this.defaultBook,
       chapter,
+      verse: 1,
     });
   }
 

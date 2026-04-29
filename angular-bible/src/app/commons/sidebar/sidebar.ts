@@ -1,4 +1,15 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  input,
+  output,
+  QueryList,
+  signal,
+  ViewChildren,
+} from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -27,9 +38,11 @@ import { SelectButtonModule } from 'primeng/selectbutton';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
-export class Sidebar {
+export class Sidebar implements AfterViewInit {
   private readonly appSettings = inject(AppSettingsService);
   private readonly router = inject(Router);
+
+  @ViewChildren('bookButtons') bookButtons!: QueryList<ElementRef>;
 
   readonly selectedBook = input<Book>({} as Book);
   readonly allBooks = input<Book[]>([]);
@@ -51,6 +64,21 @@ export class Sidebar {
     return this.allBooks().filter((book) => book.testament.toLowerCase() === 'new');
   });
 
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.scrollToBook(this.selectedBook().name);
+    }, 500);
+  }
+
+  scrollToBook(bookName: string): void {
+    const book = this.allBooks().find((b) => b.name === bookName);
+    const newTestament = book?.testament.toLowerCase() === 'old' ? 0 : 1;
+    this.updateTestament(newTestament);
+    const index = this.filteredBooks().findIndex((b) => b.name === bookName);
+    const buttonEl = this.bookButtons.get(index);
+    buttonEl?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   onDrawerClose(): void {
     this.appSettings.toggleSidebar();
   }
@@ -61,6 +89,7 @@ export class Sidebar {
     const lastRead = {
       book: bookName,
       chapter: 1,
+      verse: 1,
     };
 
     this.appSettings.setLastRead(lastRead);

@@ -67,6 +67,7 @@ export class Bookmarks {
      const lastRead = {
       book: bookmark.book,
       chapter: bookmark.chapter,
+      verse: bookmark.verse,
     };
 
     this.appSettings.setLastRead(lastRead);
