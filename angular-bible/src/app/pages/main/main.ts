@@ -161,9 +161,7 @@ export class Main implements OnInit {
           },
         });
 
-        setTimeout(() => {
-          this.scrollToVerses(lastRead);
-        }, 100);
+        this.scrollToVerse();
       }
     });
 
@@ -172,12 +170,26 @@ export class Main implements OnInit {
       .subscribe((value) => {
         this.onSearch(value ?? '');
       });
+
+    this.scrollToVerse();
   }
 
-  scrollToVerses(lastRead: LastRead): void {
-    const index = this.verses().findIndex((v) => v.verse === lastRead.verse);
-    const verseEl = this.versesList.get(index);
-    verseEl?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  scrollToVerse(): void {
+    const lastRead = this.lastRead();
+    if (lastRead) {
+      this.router.navigate(['/home'], {
+        queryParams: {
+          book: lastRead.book,
+          chapter: lastRead.chapter,
+        },
+      });
+
+      setTimeout(() => {
+        const index = this.verses().findIndex((v) => v.verse === lastRead.verse);
+        const verseEl = this.versesList.get(index);
+        verseEl?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
   }
 
   openPopoverVerseActions(event: MouseEvent, verse: Verse, target: HTMLElement): void {
