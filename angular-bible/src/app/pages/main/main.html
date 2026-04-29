@@ -88,11 +88,12 @@
     >
       <div class="flex items-center justify-center">
         <span
-          class="px-4 py-0.5 uppercase text-sm lg:text-lg font-semibold bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
+          class="px-3 py-0.5 uppercase text-sm lg:text-lg font-semibold bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
           (click)="op.toggle($event)"
           pTooltip="What is this book about?"
           tooltipPosition="bottom"
         >
+          <span class="pi pi-info-circle animate-bounce [animation-delay:-0.3s]"></span>
           {{ paramsBook()?.name }}
         </span>
       </div>
