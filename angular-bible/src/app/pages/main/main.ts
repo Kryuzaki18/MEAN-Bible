@@ -26,6 +26,7 @@ import { HighlightPipe } from '../../shared/pipes/highlight.pipes';
 
 // Constants
 import { storage } from '../../shared/constants/local-storage.constant';
+import { defaultBook } from '../../shared/constants/bible.constant';
 
 // Interfaces
 import { Verse } from '../../shared/interfaces/verse';
@@ -87,7 +88,6 @@ export class Main implements OnInit {
   @ViewChildren('versesList') versesList!: QueryList<ElementRef>;
 
   readonly searchControl = new FormControl('');
-  readonly defaultBook = 'Genesis';
 
   readonly allBooks = signal<Book[]>([]);
   readonly selectedChapter = signal<number>(1);
@@ -99,14 +99,14 @@ export class Main implements OnInit {
 
   private readonly lastRead = this.localStorageService.getLocalStorageSignal<LastRead>(
     storage.LAST_READ,
-    { book: this.defaultBook, chapter: this.selectedChapter(), verse: 1, date: new Date() },
+    { book: defaultBook, chapter: this.selectedChapter(), verse: 1, date: new Date() },
   );
 
   readonly isFirstChapter = computed(() => this.selectedChapter() === 1);
   readonly isLastChapter = computed(() => this.selectedChapter() === this.chapters().length);
 
   readonly selectedBook = computed(() => {
-    const newBook = this.queryParams()?.get('book') || this.defaultBook;
+    const newBook = this.queryParams()?.get('book') || defaultBook;
     return this.allBooks().find((b) => b.name.toLowerCase() === newBook.toLowerCase());
   });
 
@@ -230,7 +230,7 @@ export class Main implements OnInit {
       this.clearSearch();
       const newChapter = this.selectedChapter() - 1;
       this.appSettings.setLastRead({
-        book: this.selectedBook()?.name || this.defaultBook,
+        book: this.selectedBook()?.name || defaultBook,
         chapter: newChapter,
         verse: 1,
       });
@@ -244,7 +244,7 @@ export class Main implements OnInit {
       this.clearSearch();
       const newChapter = this.selectedChapter() + 1;
       this.appSettings.setLastRead({
-        book: this.selectedBook()?.name || this.defaultBook,
+        book: this.selectedBook()?.name || defaultBook,
         chapter: newChapter,
         verse: 1,
       });
@@ -261,7 +261,7 @@ export class Main implements OnInit {
     });
 
     this.appSettings.setLastRead({
-      book: this.selectedBook()?.name || this.defaultBook,
+      book: this.selectedBook()?.name || defaultBook,
       chapter,
       verse: 1,
     });

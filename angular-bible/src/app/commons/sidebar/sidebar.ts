@@ -1,29 +1,37 @@
 import {
-  AfterViewInit,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   input,
+  OnInit,
   output,
   QueryList,
   signal,
   ViewChildren,
 } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 // Interfaces
-import { Book } from '../../shared/interfaces/book';
+import { Book, LastRead } from '../../shared/interfaces/book';
+
+// Constants
+import { storage } from '../../shared/constants/local-storage.constant';
+import { defaultBook } from '../../shared/constants/bible.constant';
 
 // Services
 import { AppSettingsService } from '../../shared/services/app-settings.service';
+import { LocalStorageService } from '../../shared/services/local-storage.service';
 
 // PrimeNG Modules
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SelectButtonModule } from 'primeng/selectbutton';
+
 
 @Component({
   selector: 'app-sidebar',
@@ -38,11 +46,19 @@ import { SelectButtonModule } from 'primeng/selectbutton';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
-export class Sidebar implements AfterViewInit {
+export class Sidebar implements OnInit {
   private readonly appSettings = inject(AppSettingsService);
+  private readonly localStorageService = inject(LocalStorageService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChildren('bookButtons') bookButtons!: QueryList<ElementRef>;
+
+   private readonly lastRead = this.localStorageService.getLocalStorageSignal<LastRead>(
+      storage.LAST_READ,
+      { book: defaultBook, chapter: 1, verse: 1, date: new Date() },
+    );
 
   readonly selectedBook = input<Book>({} as Book);
   readonly allBooks = input<Book[]>([]);
@@ -64,10 +80,13 @@ export class Sidebar implements AfterViewInit {
     return this.allBooks().filter((book) => book.testament.toLowerCase() === 'new');
   });
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.scrollToBook(this.selectedBook().name);
-    }, 500);
+  ngOnInit(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const book = params.get('book') ?? defaultBook;
+      setTimeout(() => {
+        this.scrollToBook(book);
+      }, 100);
+    });
   }
 
   scrollToBook(bookName: string): void {
