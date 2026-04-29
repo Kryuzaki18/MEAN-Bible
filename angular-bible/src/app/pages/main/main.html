@@ -19,105 +19,126 @@
 </p-drawer>
 
 <main
-  class="flex justify-center max-w-[1440px] mx-auto relative 2xl:border-x border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
+  class="flex justify-center max-w-[1440px] mx-auto 2xl:border-x border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
 >
   <div class="hidden lg:block bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-800)]">
     <app-sidebar [allBooks]="allBooks()"></app-sidebar>
   </div>
 
   <div class="container flex flex-col">
-    <div
-      class="filters-container flex items-center justify-between gap-1 p-2 min-lg:px-30 dark:bg-[var(--p-primary-900)]"
-    >
-      <button
-        class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer disabled:text-stone-500 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
-        [disabled]="isFirstChapter()"
-        (click)="previousChapter()"
-      >
-        <span class="pi pi-chevron-left"></span>
-        <span class="hidden lg:block text-xs">Previous Chapter</span>
-      </button>
+    <div class="relative">
+      @if (isSubHeaderVisible()) {
+        <div
+          class="filters-container flex items-center justify-between gap-1 p-2 max-sm:my-3 min-lg:px-30 dark:bg-[var(--p-primary-900)]"
+        >
+          <button
+            class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer disabled:text-stone-500 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
+            [disabled]="isFirstChapter()"
+            (click)="previousChapter()"
+          >
+            <span class="pi pi-chevron-left"></span>
+            <span class="hidden lg:block text-xs">Previous Chapter</span>
+          </button>
 
-      <div class="flex items-center justify-center gap-1">
-        <p-select
-          [options]="chapters()"
-          [(ngModel)]="selectedChapter"
-          optionLabel="label"
-          optionValue="chapter"
-          placeholder="Select a Chapter"
-          class="w-50 md:w-60 max-md:h-8 max-md:leading-4"
-          (ngModelChange)="selectChapter($event)"
-        />
-
-        <div class="inline-flex gap-2">
-          <p-inputgroup>
-            <input
-              inputId="search"
-              type="text"
-              pInputText
-              placeholder="Search keyword..."
-              class="w-80 max-md:h-8 max-md:leading-4 placeholder:text-sm"
-              [formControl]="searchControl"
+          <div class="flex items-center justify-center gap-1 max-sm:flex-col">
+            <p-select
+              [options]="chapters()"
+              [(ngModel)]="selectedChapter"
+              optionLabel="label"
+              optionValue="chapter"
+              placeholder="Select a Chapter"
+              class="w-60 max-md:h-8 max-md:leading-4"
+              (ngModelChange)="selectChapter($event)"
             />
-            <p-inputgroup-addon>
-              <p-button
-                class="max-md:h-7"
-                (click)="clearSearch()"
-                icon="pi pi-times"
-                [text]="true"
-                severity="danger"
-              >
-              </p-button>
-            </p-inputgroup-addon>
-          </p-inputgroup>
+
+            <div class="inline-flex gap-2">
+              <p-inputgroup>
+                <input
+                  inputId="search"
+                  type="text"
+                  pInputText
+                  placeholder="Search"
+                  class="w-80 max-md:h-8 max-md:leading-4 placeholder:text-sm"
+                  [formControl]="searchControl"
+                />
+                <p-inputgroup-addon>
+                  <p-button
+                    class="max-md:h-7"
+                    (click)="clearSearch()"
+                    icon="pi pi-times"
+                    [text]="true"
+                    severity="danger"
+                  >
+                  </p-button>
+                </p-inputgroup-addon>
+              </p-inputgroup>
+            </div>
+          </div>
+
+          <button
+            class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer disabled:text-stone-500 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
+            [disabled]="isLastChapter()"
+            (click)="nextChapter()"
+          >
+            <span class="hidden lg:block text-xs">Next Chapter</span>
+            <span class="pi pi-chevron-right"></span>
+          </button>
         </div>
-      </div>
 
-      <button
-        class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer disabled:text-stone-500 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
-        [disabled]="isLastChapter()"
-        (click)="nextChapter()"
-      >
-        <span class="hidden lg:block text-xs">Next Chapter</span>
-        <span class="pi pi-chevron-right"></span>
-      </button>
-    </div>
-
-    <div
-      class="book-chapter-container flex flex-col items-center justify-center dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
-    >
+        <div
+          class="book-chapter-container flex flex-col items-center justify-center dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
+        >
+          <div
+            class="flex items-center gap-1 px-3 py-1 bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
+            (click)="op.toggle($event)"
+            pTooltip="What is this book about?"
+            tooltipPosition="bottom"
+          >
+            <span class="pi pi-info-circle animate-bounce [animation-delay:-0.3s]"></span>
+            <span class="uppercase text-sm lg:text-lg font-semibold">{{ paramsBook()?.name }}</span>
+          </div>
+          <div class="mt-1">
+            <span
+              class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-3xl lg:text-4xl"
+            >
+              {{ paramsChapter() || 1 }}
+            </span>
+          </div>
+          <div>
+            <span
+              class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-md lg:text-lg"
+            >
+              Chapter
+            </span>
+          </div>
+        </div>
+      }
       <div
-        class="flex items-center gap-1 px-3 py-1 bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
-        (click)="op.toggle($event)"
-        pTooltip="What is this book about?"
-        tooltipPosition="bottom"
+        class="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer z-10 absolute right-0 mr-15 bottom-0 mx-auto -mb-3 bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-200)] dark:border-[var(--p-primary-400)]"
+        (click)="toggleSubHeader()"
       >
-        <span class="pi pi-info-circle animate-bounce [animation-delay:-0.3s]"></span>
-        <span class="uppercase text-sm lg:text-lg font-semibold">{{ paramsBook()?.name }}</span>
-      </div>
-      <div class="mt-1">
         <span
-          class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-3xl lg:text-4xl"
-        >
-          {{ paramsChapter() || 1 }}
-        </span>
-      </div>
-      <div>
-        <span
-          class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-md lg:text-lg"
-        >
-          Chapter
-        </span>
+          class="pi !text-sm text-[var(--p-primary-300)] dark:text-[var(--p-primary-100)]"
+          [ngClass]="{
+            'pi-angle-double-up': isSubHeaderVisible(),
+            'pi-angle-double-down': !isSubHeaderVisible(),
+          }"
+        ></span>
       </div>
     </div>
 
-    <p-popover #op [dismissable]="true" styleClass="max-xl:-ml-3">
-      <div class="w-100">
+    <p-popover #op [dismissable]="true">
+      <div class="w-100 max-md:w-full">
         {{ paramsBook()?.description }}
       </div>
     </p-popover>
 
-    <p-scrollpanel class="verses-container dark:bg-[var(--p-primary-950)] pb-5">
+    <p-scrollpanel
+      class="verses-container dark:bg-[var(--p-primary-950)] pb-2"
+      [ngClass]="{
+        '!h-full': !isSubHeaderVisible(),
+      }"
+    >
       @if (isLoading()) {
         <div
           class="flex items-center justify-center gap-2 size-full text-md text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)]"
@@ -143,7 +164,7 @@
             item.book === verse.book && +item.chapter === +verse.chapter && +item.verse === +verse.verse
         );
 
-          <div #versesList class="flex items-start min-lg:px-30 p-2">
+          <div #versesList class="flex items-start min-lg:px-30 p-2 max-lg:px-2">
             <div class="flex p-1 rounded-xs flex-none w-[40px]">
               <span
                 class="text-md text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] font-semibold"

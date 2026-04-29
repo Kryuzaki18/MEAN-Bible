@@ -1,10 +1,12 @@
 import {
+  afterNextRender,
   Component,
   computed,
   DestroyRef,
   effect,
   ElementRef,
   inject,
+  Injector,
   OnInit,
   QueryList,
   signal,
@@ -13,9 +15,9 @@ import {
 } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, skip, take, tap } from 'rxjs/operators';
 
 // Common Components
 import { Sidebar } from '../../commons/sidebar/sidebar';
@@ -83,6 +85,7 @@ export class Main implements OnInit {
   readonly bookmarkService = inject(BookmarkService);
   readonly localStorageService = inject(LocalStorageService);
   private destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   @ViewChild('popoverVerseActions') popoverVerseActions!: Popover;
   @ViewChildren('versesList') versesList!: QueryList<ElementRef>;
@@ -90,6 +93,7 @@ export class Main implements OnInit {
   readonly searchControl = new FormControl('');
 
   private readonly isFirstLoad = signal<boolean>(true);
+  readonly isSubHeaderVisible = signal<boolean>(true);
   readonly isLoading = signal<boolean>(true);
   readonly allBooks = signal<Book[]>([]);
   readonly selectedChapter = signal<number>(1);
@@ -151,16 +155,6 @@ export class Main implements OnInit {
     return !!isBookmarked;
   });
 
-  constructor() {
-    effect(() => {
-      const book = this.paramsBook();
-      const selectedChapter = this.selectedChapter();
-      if (book?.name && selectedChapter) {
-        this.getAllVersesByChapter(book.name, selectedChapter);
-      }
-    });
-  }
-
   ngOnInit(): void {
     this.fetchBooks();
 
@@ -168,11 +162,12 @@ export class Main implements OnInit {
       .pipe(
         tap(() => this.isLoading.set(true)),
         takeUntilDestroyed(this.destroyRef),
-        debounceTime(500),
+        debounceTime(100),
       )
       .subscribe((params) => {
         this.clearSearch();
         const lastRead = this.lastRead();
+        this.selectedVerse.set(null);
 
         if (
           this.isFirstLoad() &&
@@ -189,24 +184,25 @@ export class Main implements OnInit {
             replaceUrl: true,
           });
           this.selectedChapter.set(lastRead.chapter);
+          this.getAllVersesByChapter(lastRead.book, lastRead.chapter);
           this.scrollToVerse(lastRead.verse);
         } else {
+          const book = this.paramsBook()?.name ?? defaultBook;
+          const chapter = this.paramsChapter() || 1;
           this.router.navigate(['/home'], {
             relativeTo: this.route,
             queryParams: {
-              book: this.paramsBook()?.name ?? defaultBook,
-              chapter: this.paramsChapter() || 1,
+              book,
+              chapter,
               verse: this.paramsVerse() || 1,
             },
             queryParamsHandling: 'merge',
             replaceUrl: true,
           });
-
-          this.selectedChapter.set(this.paramsChapter());
+          this.selectedChapter.set(chapter);
+          this.getAllVersesByChapter(book, chapter);
           this.scrollToVerse(this.paramsVerse());
         }
-
-        this.selectedVerse.set(null);
       });
 
     this.searchControl.valueChanges
@@ -217,13 +213,25 @@ export class Main implements OnInit {
   }
 
   scrollToVerse(verse: number): void {
-    const index = this.verses().findIndex((v) => v.verse === verse);
-
-    setTimeout(() => {
-      this.isLoading.set(false);
-      const verseEl = this.versesList.get(index);
-      verseEl?.nativeElement.scrollIntoView({ behavior: 'smooth' });
-    }, 250);
+    toObservable(this.verses, { injector: this.injector })
+      .pipe(
+        skip(1),
+        filter((verses) => verses.length > 0),
+        take(1),
+      )
+      .subscribe((verses) => {
+        const index = verses.findIndex((v) => v.verse === verse);
+        if (index === -1) return;
+        this.isLoading.set(false);
+        requestAnimationFrame(() => {
+          const verseEl = this.versesList.get(index);
+          verseEl?.nativeElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest',
+          });
+        });
+      });
   }
 
   openPopoverVerseActions(event: MouseEvent, verse: Verse, target: HTMLElement): void {
@@ -321,6 +329,10 @@ export class Main implements OnInit {
     });
 
     this.selectedVerse.set(null);
+  }
+
+  toggleSubHeader(): void {
+    this.isSubHeaderVisible.set(!this.isSubHeaderVisible());
   }
 
   private onSearch(query: string): void {

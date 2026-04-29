@@ -1,9 +1,11 @@
 import {
+  afterNextRender,
   Component,
   computed,
   DestroyRef,
   ElementRef,
   inject,
+  Injector,
   input,
   OnInit,
   output,
@@ -14,8 +16,8 @@ import {
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { debounceTime } from 'rxjs';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime, filter, take } from 'rxjs';
 
 // Interfaces
 import { Book } from '../../shared/interfaces/book';
@@ -49,6 +51,7 @@ export class Sidebar implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   @ViewChildren('bookButtons') bookButtons!: QueryList<ElementRef>;
 
@@ -78,8 +81,8 @@ export class Sidebar implements OnInit {
 
   ngOnInit(): void {
     this.route.queryParamMap
-      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(500))
-      .subscribe((params) => {
+      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(100))
+      .subscribe(() => {
         this.scrollToBook();
       });
   }
@@ -87,17 +90,29 @@ export class Sidebar implements OnInit {
   scrollToBook(): void {
     const bookName = this.selectedBook()?.name;
     const book = this.allBooks().find((b) => b.name.toLowerCase() === bookName?.toLowerCase());
+
     const newTestament = book?.testament.toLowerCase() === 'old' ? 0 : 1;
     this.updateTestament(newTestament);
 
-    const index = this.filteredBooks().findIndex(
-      (b) => b.name.toLowerCase() === bookName?.toLowerCase(),
-    );
+    toObservable(this.filteredBooks, { injector: this.injector })
+      .pipe(
+        filter((books) => books.length > 0),
+        take(1),
+      )
+      .subscribe((books) => {
+        const index = books.findIndex((b) => b.name.toLowerCase() === bookName?.toLowerCase());
 
-    setTimeout(() => {
-      const buttonEl = this.bookButtons.get(index);
-      buttonEl?.nativeElement.scrollIntoView({ behavior: 'smooth'});
-    }, 250);
+        if (index === -1) return;
+
+        requestAnimationFrame(() => {
+          const buttonEl = this.bookButtons.get(index);
+          buttonEl?.nativeElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest',
+          });
+        });
+      });
   }
 
   onDrawerClose(): void {

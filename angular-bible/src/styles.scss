@@ -14,3 +14,8 @@ body {
   width: 100%;
   overflow: hidden;
 }
+
+.p-popover::before,
+.p-popover::after {
+  display: none !important;
+}

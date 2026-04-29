@@ -1,7 +1,7 @@
 @use 'variables' as *;
 
 .container {
-  width: $main-width;
+  max-width: $main-width;
   height: calc(100dvh - #{$header-height});
 }
 
