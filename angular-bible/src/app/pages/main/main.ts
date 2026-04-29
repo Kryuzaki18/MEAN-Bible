@@ -21,15 +21,19 @@ import { Header } from '../../commons/header/header';
 // Pipes
 import { HighlightPipe } from '../../shared/pipes/highlight.pipes';
 
+// Constants
+import { storage } from '../../shared/constants/local-storage.constant';
+
 // Interfaces
 import { Verse } from '../../shared/interfaces/verse';
-import { Book } from '../../shared/interfaces/book';
+import { Book, LastRead } from '../../shared/interfaces/book';
 
 // Services
 import { BibleService } from '../../shared/services/bible.service';
 import { BookmarkService } from '../../shared/services/bookmark.service';
 import { ToastService } from '../../shared/services/toast.service';
 import { AppSettingsService } from '../../shared/services/app-settings.service';
+import { LocalStorageService } from '../../shared/services/local-storage.service';
 
 // PrimeNG Modules
 import { InputTextModule } from 'primeng/inputtext';
@@ -73,6 +77,7 @@ export class Main implements OnInit {
   private readonly route = inject(ActivatedRoute);
   readonly appSettings = inject(AppSettingsService);
   readonly bookmarkService = inject(BookmarkService);
+  readonly localStorageService = inject(LocalStorageService);
   private destroyRef = inject(DestroyRef);
 
   @ViewChild('popoverVerseActions') popoverVerseActions!: Popover;
@@ -87,6 +92,11 @@ export class Main implements OnInit {
   readonly queryParams = toSignal(this.route.queryParamMap);
 
   private initialVerses: Verse[] = [];
+
+  private readonly lastRead = this.localStorageService.getLocalStorageSignal<LastRead>(
+    storage.LAST_READ,
+    { book: this.defaultBook, chapter: this.selectedChapter(), date: new Date() },
+  );
 
   readonly isFirstChapter = computed(() => this.selectedChapter() === 1);
   readonly isLastChapter = computed(() => this.selectedChapter() === this.chapters().length);
@@ -120,7 +130,6 @@ export class Main implements OnInit {
     return !!isBookmarked;
   });
 
-
   constructor() {
     effect(() => {
       const book = this.selectedBook();
@@ -145,6 +154,16 @@ export class Main implements OnInit {
       .subscribe((value) => {
         this.onSearch(value ?? '');
       });
+
+    const lastRead = this.lastRead();
+    if (lastRead) {
+      this.router.navigate(['/home'], {
+        queryParams: {
+          book: lastRead.book,
+          chapter: lastRead.chapter,
+        },
+      });
+    }
   }
 
   openPopoverVerseActions(event: MouseEvent, verse: Verse, target: HTMLElement): void {
@@ -195,8 +214,12 @@ export class Main implements OnInit {
   previousChapter(): void {
     if (!this.isFirstChapter()) {
       this.clearSearch();
-      this.selectedChapter.update((chapter) => chapter - 1);
-      this.selectChapter(this.selectedChapter());
+      const newChapter = this.selectedChapter() - 1;
+      this.appSettings.setLastRead({
+        book: this.selectedBook()?.name || this.defaultBook,
+        chapter: newChapter,
+      });
+      this.selectChapter(newChapter);
     }
   }
 
@@ -204,8 +227,12 @@ export class Main implements OnInit {
     const chaptersCount = this.chapters().length;
     if (this.selectedChapter() < chaptersCount) {
       this.clearSearch();
-      this.selectedChapter.update((chapter) => chapter + 1);
-      this.selectChapter(this.selectedChapter());
+      const newChapter = this.selectedChapter() + 1;
+      this.appSettings.setLastRead({
+        book: this.selectedBook()?.name || this.defaultBook,
+        chapter: newChapter,
+      });
+      this.selectChapter(newChapter);
     }
   }
 
@@ -215,6 +242,11 @@ export class Main implements OnInit {
       queryParams: { chapter },
       queryParamsHandling: 'merge',
       replaceUrl: true,
+    });
+
+    this.appSettings.setLastRead({
+      book: this.selectedBook()?.name || this.defaultBook,
+      chapter,
     });
   }
 

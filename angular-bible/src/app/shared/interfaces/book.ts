@@ -7,3 +7,9 @@ export interface Book {
   verses: number;
   description: string;
 }
+
+export interface LastRead {
+  book: string;
+  chapter: number;
+  date?: Date;
+}

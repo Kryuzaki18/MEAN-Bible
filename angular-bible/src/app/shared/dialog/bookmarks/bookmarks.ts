@@ -12,6 +12,7 @@ import { SortedDatesPipe } from '../../pipes/sorted-dates.pipes';
 // Services
 import { BookmarkService } from '../../services/bookmark.service';
 import { ToastService } from '../../services/toast.service';
+import { AppSettingsService } from '../../services/app-settings.service';
 
 // PrimeNG Modules
 import { CardModule } from 'primeng/card';
@@ -38,15 +39,13 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class Bookmarks {
   private readonly bookmarkService = inject(BookmarkService);
+  private readonly appSettings = inject(AppSettingsService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
+  readonly ref = inject(DynamicDialogRef);
 
   readonly bookmarks = this.bookmarkService.bookmarks;
   readonly selectedCopyVerse = signal<Verse | null>(null);
-
-  constructor(
-    public ref: DynamicDialogRef,
-    private router: Router,
-    private toastService: ToastService,
-  ) {}
 
   removeBookmarked(verse: BookmarkedVerse): void {
     if (!verse) {
@@ -64,6 +63,13 @@ export class Bookmarks {
     this.router.navigate(['/home'], {
       queryParams: { book: bookmark.book, chapter: bookmark.chapter },
     });
+
+     const lastRead = {
+      book: bookmark.book,
+      chapter: bookmark.chapter,
+    };
+
+    this.appSettings.setLastRead(lastRead);
     this.ref.close();
   }
 

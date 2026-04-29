@@ -1,5 +1,8 @@
 import { Injectable, signal, effect, inject } from '@angular/core';
 
+// Models
+import { LastRead } from '../interfaces/book';
+
 // Services
 import { LocalStorageService } from './local-storage.service';
 
@@ -25,6 +28,14 @@ export class AppSettingsService {
         document.documentElement.classList.remove('bg-[var(--p-primary-900)]/80');
       }
     });
+  }
+
+  setLastRead(lastRead: LastRead): void {
+    const newLastRead = {
+      ...lastRead,
+      date: new Date(),
+    };
+    this.localStorageService.updateLocalStorageSignal(storage.LAST_READ, newLastRead);
   }
 
   toggleSidebar(): void {

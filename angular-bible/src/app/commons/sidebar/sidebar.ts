@@ -57,7 +57,14 @@ export class Sidebar {
 
   navigateToBook(bookName: string): void {
     this.onBookSelected.emit(bookName);
-    this.router.navigate(['/home'], { queryParams: { book: bookName, chapter: 1 } });
+
+    const lastRead = {
+      book: bookName,
+      chapter: 1,
+    };
+
+    this.appSettings.setLastRead(lastRead);
+    this.router.navigate(['/home'], { queryParams: lastRead });
   }
 
   updateTestament(testament: number): void {
