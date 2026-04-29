@@ -84,29 +84,27 @@
     </div>
 
     <div
-      class="book-chapter-container flex flex-col items-center justify-center dark:bg-[var(--p-primary-900)]"
+      class="book-chapter-container flex flex-col items-center justify-center dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
     >
-      <div class="flex items-center justify-center">
-        <span
-          class="px-3 py-0.5 uppercase text-sm lg:text-lg font-semibold bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
-          (click)="op.toggle($event)"
-          pTooltip="What is this book about?"
-          tooltipPosition="bottom"
-        >
-          <span class="pi pi-info-circle animate-bounce [animation-delay:-0.3s]"></span>
-          {{ paramsBook()?.name }}
-        </span>
+      <div
+        class="flex items-center gap-1 px-3 py-1 bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
+        (click)="op.toggle($event)"
+        pTooltip="What is this book about?"
+        tooltipPosition="bottom"
+      >
+        <span class="pi pi-info-circle animate-bounce [animation-delay:-0.3s]"></span>
+        <span class="uppercase text-sm lg:text-lg font-semibold">{{ paramsBook()?.name }}</span>
       </div>
-      <div>
+      <div class="mt-1">
         <span
-          class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-lg lg:text-4xl"
+          class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-3xl lg:text-4xl"
         >
           {{ paramsChapter() || 1 }}
         </span>
       </div>
       <div>
         <span
-          class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-sm lg:text-lg"
+          class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-md lg:text-lg"
         >
           Chapter
         </span>
@@ -145,7 +143,7 @@
             item.book === verse.book && +item.chapter === +verse.chapter && +item.verse === +verse.verse
         );
 
-          <div class="flex items-start min-lg:px-30 p-2" #versesList>
+          <div #versesList class="flex items-start min-lg:px-30 p-2">
             <div class="flex p-1 rounded-xs flex-none w-[40px]">
               <span
                 class="text-md text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] font-semibold"
