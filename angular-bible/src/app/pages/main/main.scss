@@ -37,18 +37,10 @@
   }
 
   .sidebar-container {
-    height: 100dvh;
+    height: 100dvh !important;
   }
 
   .drawer-header {
     height: $header-height;
-  }
-
-  .sidebar-tabs {
-    height: $header-height;
-  }
-
-  .sidebar-books {
-    height: calc(100dvh - #{$header-height} - #{$header-height});
   }
 }

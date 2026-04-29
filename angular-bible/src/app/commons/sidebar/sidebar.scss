@@ -10,5 +10,5 @@
 }
 
 .sidebar-books {
-  height: calc(100dvh - #{$sidebar-tabs-height});
+  height: calc(100dvh - #{$sidebar-tabs-height} - #{$header-height});
 }
