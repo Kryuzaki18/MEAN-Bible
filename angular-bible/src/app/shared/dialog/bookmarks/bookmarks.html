@@ -14,11 +14,23 @@
     <span class="pi pi-times cursor-pointer text-red-500 p-2" (click)="ref.close()"></span>
   </div>
 
+  <p-selectbutton
+    [allowEmpty]="false"
+    [options]="testaments()"
+    optionLabel="label"
+    optionValue="value"
+    dataKey="value"
+    size="small"
+    class="text-xs"
+    [(ngModel)]="testament"
+    (onChange)="updateTestament($event.value)"
+  />
+
   <p-scrollpanel class="px-2" style="width: 100%; max-height: 580px">
-    @for (bookmark of bookmarks() | sortedDates; track $index) {
+    @for (bookmark of filteredBookmarks() | sortedDates; track $index) {
       <div
         class="font-light border-dashed border-b border-[var(--p-primary-500)] dark:border-[var(--p-primary-700)] py-3"
-        [class.border-none]="$index === bookmarks().length - 1"
+        [class.border-none]="$index === filteredBookmarks().length - 1"
       >
         <div class="text-sm tracking-widest">
           <span
@@ -94,9 +106,9 @@
         </div>
       </div>
     }
-  </p-scrollpanel>
 
-  @if (bookmarks().length === 0) {
-    <p class="text-center text-gray-500 mt-4">No bookmarks yet.</p>
-  }
+    @if (filteredBookmarks().length === 0) {
+      <p class="text-center text-gray-500 mt-4 text-sm">No bookmarks yet.</p>
+    }
+  </p-scrollpanel>
 </div>

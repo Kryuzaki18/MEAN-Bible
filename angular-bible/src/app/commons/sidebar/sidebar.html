@@ -24,7 +24,7 @@
         class="flex items-center gap-3 py-1.5 px-2 w-full cursor-pointer font-light hover:bg-[var(--p-primary-100)] dark:hover:bg-[var(--p-primary-400)] hover:text-[var(--p-primary-600)] dark:hover:text-[var(--p-primary-50)]"
         [ngClass]="{
           'bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-500)] text-[var(--p-primary-600)] dark:text-[var(--p-primary-50)] font-semibold':
-            book.name === selectedBook().name,
+            book.name === selectedBook()?.name,
         }"
         (click)="navigateToBook(book.name)"
       >

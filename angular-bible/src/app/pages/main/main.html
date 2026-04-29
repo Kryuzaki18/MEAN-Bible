@@ -15,18 +15,14 @@
     ></span>
   </div>
 
-  <app-sidebar
-    [allBooks]="allBooks()"
-    [selectedBook]="selectedBook()!"
-    (onBookSelected)="appSettings.isSidebarVisible.set(false)"
-  ></app-sidebar>
+  <app-sidebar [allBooks]="allBooks()"></app-sidebar>
 </p-drawer>
 
 <main
   class="flex justify-center max-w-[1440px] mx-auto relative 2xl:border-x border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
 >
   <div class="hidden lg:block bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-800)]">
-    <app-sidebar [allBooks]="allBooks()" [selectedBook]="selectedBook()!"></app-sidebar>
+    <app-sidebar [allBooks]="allBooks()"></app-sidebar>
   </div>
 
   <div class="container flex flex-col">
@@ -97,7 +93,7 @@
           pTooltip="What is this book about?"
           tooltipPosition="bottom"
         >
-          {{ selectedBook()?.name }}
+          {{ paramsBook()?.name }}
         </span>
       </div>
       <div>
@@ -118,7 +114,7 @@
 
     <p-popover #op [dismissable]="true" styleClass="max-xl:-ml-3">
       <div class="w-100">
-        {{ selectedBook()?.description }}
+        {{ paramsBook()?.description }}
       </div>
     </p-popover>
 

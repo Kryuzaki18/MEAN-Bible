@@ -89,6 +89,7 @@ export class Main implements OnInit {
 
   readonly searchControl = new FormControl('');
 
+  private readonly isFirstLoad = signal<boolean>(true);
   readonly allBooks = signal<Book[]>([]);
   readonly selectedChapter = signal<number>(1);
   readonly verses = signal<Verse[]>([]);
@@ -105,13 +106,27 @@ export class Main implements OnInit {
   readonly isFirstChapter = computed(() => this.selectedChapter() === 1);
   readonly isLastChapter = computed(() => this.selectedChapter() === this.chapters().length);
 
-  readonly selectedBook = computed(() => {
-    const newBook = this.queryParams()?.get('book') || defaultBook;
-    return this.allBooks().find((b) => b.name.toLowerCase() === newBook.toLowerCase());
+  readonly paramsBook = computed(() => {
+    const newBook = this.queryParams()?.get('book');
+    return this.allBooks().find((b) => b.name.toLowerCase() === newBook?.toLowerCase());
+  });
+
+  readonly paramsChapter = computed(() => {
+    if (!this.paramsBook()) return 0;
+    const chapter = parseInt(this.queryParams()?.get('chapter') ?? '0');
+    const maxChapter = this.paramsBook()?.chapters || 0;
+    return isNaN(chapter) || chapter < 1 ? 0 : chapter > maxChapter ? 0 : chapter;
+  });
+
+  readonly paramsVerse = computed(() => {
+    if (!this.paramsBook()) return 0;
+    const verse = parseInt(this.queryParams()?.get('verse') ?? '0');
+    const maxVerse = this.paramsBook()?.verses || 0;
+    return isNaN(verse) || verse < 1 ? 0 : verse > maxVerse ? 0 : verse;
   });
 
   readonly chapters = computed(() => {
-    const book = this.selectedBook();
+    const book = this.paramsBook();
     const totalChapters = book?.chapters;
     if (totalChapters) {
       return Array.from({ length: totalChapters }, (_, i) => ({
@@ -136,7 +151,7 @@ export class Main implements OnInit {
 
   constructor() {
     effect(() => {
-      const book = this.selectedBook();
+      const book = this.paramsBook();
       const selectedChapter = this.selectedChapter();
       if (book?.name && selectedChapter) {
         this.getAllVersesByChapter(book.name, selectedChapter);
@@ -147,49 +162,61 @@ export class Main implements OnInit {
   ngOnInit(): void {
     this.fetchBooks();
 
-    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
-      const raw = parseInt(params.get('chapter') ?? '1', 10);
-      this.selectedChapter.set(isNaN(raw) || raw < 1 ? 1 : raw);
-      this.clearSearch();
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(500))
+      .subscribe((params) => {
+        this.clearSearch();
+        const lastRead = this.lastRead();
 
-      const lastRead = this.lastRead();
-      if (lastRead) {
-        this.router.navigate(['/home'], {
-          queryParams: {
-            book: lastRead.book,
-            chapter: lastRead.chapter,
-          },
-        });
+        if (
+          this.isFirstLoad() &&
+          !this.paramsBook() &&
+          !this.paramsChapter() &&
+          !this.paramsVerse() &&
+          lastRead
+        ) {
+          delete lastRead.date;
+          this.router.navigate(['/home'], {
+            relativeTo: this.route,
+            queryParams: lastRead,
+            queryParamsHandling: 'merge',
+            replaceUrl: true,
+          });
+          this.selectedChapter.set(lastRead.chapter);
+          this.scrollToVerse(lastRead.verse);
+        } else if (this.paramsBook() && this.paramsChapter() && this.paramsVerse()) {
+          this.router.navigate(['/home'], {
+            relativeTo: this.route,
+            queryParams: {
+              book: this.paramsBook()?.name,
+              chapter: this.paramsChapter(),
+              verse: this.paramsVerse(),
+            },
+            queryParamsHandling: 'merge',
+            replaceUrl: true,
+          });
 
-        this.scrollToVerse();
-      }
-    });
+          this.selectedChapter.set(this.paramsChapter());
+          this.scrollToVerse(this.paramsVerse());
+        }
+
+        this.isFirstLoad.set(false);
+      });
 
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.onSearch(value ?? '');
       });
-
-    this.scrollToVerse();
   }
 
-  scrollToVerse(): void {
-    const lastRead = this.lastRead();
-    if (lastRead) {
-      this.router.navigate(['/home'], {
-        queryParams: {
-          book: lastRead.book,
-          chapter: lastRead.chapter,
-        },
-      });
+  scrollToVerse(verse: number): void {
+    const index = this.verses().findIndex((v) => v.verse === verse);
 
-      setTimeout(() => {
-        const index = this.verses().findIndex((v) => v.verse === lastRead.verse);
-        const verseEl = this.versesList.get(index);
-        verseEl?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 100);
-    }
+    setTimeout(() => {
+      const verseEl = this.versesList.get(index);
+      verseEl?.nativeElement.scrollIntoView({ behavior: 'smooth' });
+    }, 250);
   }
 
   openPopoverVerseActions(event: MouseEvent, verse: Verse, target: HTMLElement): void {
@@ -199,6 +226,10 @@ export class Main implements OnInit {
       this.popoverVerseActions.toggle(event, target);
     } else {
       this.popoverVerseActions.hide();
+
+      const updatedBooks = this.allBooks().find((b) => b.name === verse.book);
+      verse.testament = updatedBooks?.testament || 'old';
+
       this.selectedVerse.set(verse);
 
       setTimeout(() => {
@@ -242,7 +273,7 @@ export class Main implements OnInit {
       this.clearSearch();
       const newChapter = this.selectedChapter() - 1;
       this.appSettings.setLastRead({
-        book: this.selectedBook()?.name || defaultBook,
+        book: this.paramsBook()?.name || defaultBook,
         chapter: newChapter,
         verse: 1,
       });
@@ -256,7 +287,7 @@ export class Main implements OnInit {
       this.clearSearch();
       const newChapter = this.selectedChapter() + 1;
       this.appSettings.setLastRead({
-        book: this.selectedBook()?.name || defaultBook,
+        book: this.paramsBook()?.name || defaultBook,
         chapter: newChapter,
         verse: 1,
       });
@@ -265,15 +296,15 @@ export class Main implements OnInit {
   }
 
   selectChapter(chapter: number): void {
-    this.router.navigate([], {
+    this.router.navigate(['/home'], {
       relativeTo: this.route,
-      queryParams: { chapter },
+      queryParams: { chapter, verse: 1 },
       queryParamsHandling: 'merge',
       replaceUrl: true,
     });
 
     this.appSettings.setLastRead({
-      book: this.selectedBook()?.name || defaultBook,
+      book: this.paramsBook()?.name || defaultBook,
       chapter,
       verse: 1,
     });

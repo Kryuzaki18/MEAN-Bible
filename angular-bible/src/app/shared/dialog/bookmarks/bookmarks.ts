@@ -1,6 +1,6 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, LowerCasePipe } from '@angular/common';
 
 // Interfaces
@@ -20,6 +20,7 @@ import { ButtonModule } from 'primeng/button';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { TooltipModule } from 'primeng/tooltip';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @Component({
   selector: 'app-bookmarks',
@@ -32,6 +33,7 @@ import { TooltipModule } from 'primeng/tooltip';
     SortedDatesPipe,
     ScrollPanelModule,
     TooltipModule,
+    SelectButtonModule,
   ],
   templateUrl: './bookmarks.html',
   styleUrl: './bookmarks.scss',
@@ -42,10 +44,37 @@ export class Bookmarks {
   private readonly appSettings = inject(AppSettingsService);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   readonly ref = inject(DynamicDialogRef);
 
   readonly bookmarks = this.bookmarkService.bookmarks;
   readonly selectedCopyVerse = signal<Verse | null>(null);
+
+  readonly testament = signal<number>(0);
+
+  readonly filteredBookmarks = computed(() => {
+    const oldTestament = this.bookmarks().filter((book) => book.testament.toLowerCase() === 'old');
+    const newTestament = this.bookmarks().filter((book) => book.testament.toLowerCase() === 'new');
+
+    if (this.testament() === 0) {
+      return oldTestament;
+    }
+    return newTestament;
+  });
+
+  readonly testaments = computed<{ label: string; value: number }[]>(() => {
+    const oldTestament = this.bookmarks().filter((book) => book.testament.toLowerCase() === 'old');
+    const newTestament = this.bookmarks().filter((book) => book.testament.toLowerCase() === 'new');
+
+    return [
+      { label: `Old (${oldTestament.length})`, value: 0 },
+      { label: `New (${newTestament.length})`, value: 1 },
+    ];
+  });
+
+  updateTestament(testament: number): void {
+    this.testament.set(testament);
+  }
 
   removeBookmarked(verse: BookmarkedVerse): void {
     if (!verse) {
@@ -60,17 +89,21 @@ export class Bookmarks {
   }
 
   navigateBookmark(bookmark: BookmarkedVerse): void {
-    this.router.navigate(['/home'], {
-      queryParams: { book: bookmark.book, chapter: bookmark.chapter },
-    });
-
-     const lastRead = {
+    const lastRead = {
       book: bookmark.book,
       chapter: bookmark.chapter,
       verse: bookmark.verse,
     };
 
     this.appSettings.setLastRead(lastRead);
+
+    this.router.navigate(['/home'], {
+      relativeTo: this.route,
+      queryParams: lastRead,
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+
     this.ref.close();
   }
 

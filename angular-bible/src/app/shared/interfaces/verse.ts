@@ -3,6 +3,7 @@ export interface Verse {
   chapter: number;
   verse: number;
   text: string;
+  testament: string;
 }
 
 export interface BookmarkedVerse extends Verse {
