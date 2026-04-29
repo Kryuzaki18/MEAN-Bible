@@ -15,7 +15,7 @@ import { NgClass } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 
 // Common Components
 import { Sidebar } from '../../commons/sidebar/sidebar';
@@ -90,10 +90,11 @@ export class Main implements OnInit {
   readonly searchControl = new FormControl('');
 
   private readonly isFirstLoad = signal<boolean>(true);
+  readonly isLoading = signal<boolean>(true);
   readonly allBooks = signal<Book[]>([]);
   readonly selectedChapter = signal<number>(1);
   readonly verses = signal<Verse[]>([]);
-  readonly selectedVerse = signal<Verse>({} as Verse);
+  readonly selectedVerse = signal<Verse | null>(null);
   readonly queryParams = toSignal(this.route.queryParamMap);
 
   private initialVerses: Verse[] = [];
@@ -138,12 +139,13 @@ export class Main implements OnInit {
   });
 
   readonly isBookmarked = computed(() => {
+    if (!this.selectedVerse()) return false;
     const bookmarks = this.bookmarkService.bookmarks();
     const isBookmarked = bookmarks.find(
       (item) =>
-        item.book === this.selectedVerse().book &&
-        +item.chapter === +this.selectedVerse().chapter &&
-        +item.verse === +this.selectedVerse().verse,
+        item.book === this.selectedVerse()!.book &&
+        +item.chapter === +this.selectedVerse()!.chapter &&
+        +item.verse === +this.selectedVerse()!.verse,
     );
 
     return !!isBookmarked;
@@ -163,7 +165,11 @@ export class Main implements OnInit {
     this.fetchBooks();
 
     this.route.queryParamMap
-      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(500))
+      .pipe(
+        tap(() => this.isLoading.set(true)),
+        takeUntilDestroyed(this.destroyRef),
+        debounceTime(500),
+      )
       .subscribe((params) => {
         this.clearSearch();
         const lastRead = this.lastRead();
@@ -184,13 +190,13 @@ export class Main implements OnInit {
           });
           this.selectedChapter.set(lastRead.chapter);
           this.scrollToVerse(lastRead.verse);
-        } else if (this.paramsBook() && this.paramsChapter() && this.paramsVerse()) {
+        } else {
           this.router.navigate(['/home'], {
             relativeTo: this.route,
             queryParams: {
-              book: this.paramsBook()?.name,
-              chapter: this.paramsChapter(),
-              verse: this.paramsVerse(),
+              book: this.paramsBook()?.name ?? defaultBook,
+              chapter: this.paramsChapter() || 1,
+              verse: this.paramsVerse() || 1,
             },
             queryParamsHandling: 'merge',
             replaceUrl: true,
@@ -200,7 +206,7 @@ export class Main implements OnInit {
           this.scrollToVerse(this.paramsVerse());
         }
 
-        this.isFirstLoad.set(false);
+        this.selectedVerse.set(null);
       });
 
     this.searchControl.valueChanges
@@ -214,6 +220,7 @@ export class Main implements OnInit {
     const index = this.verses().findIndex((v) => v.verse === verse);
 
     setTimeout(() => {
+      this.isLoading.set(false);
       const verseEl = this.versesList.get(index);
       verseEl?.nativeElement.scrollIntoView({ behavior: 'smooth' });
     }, 250);
@@ -239,11 +246,13 @@ export class Main implements OnInit {
   }
 
   addBookmark(): void {
-    this.bookmarkService.addBookmark(this.selectedVerse());
+    if (!this.selectedVerse()) return;
+    this.bookmarkService.addBookmark(this.selectedVerse()!);
   }
 
   removeBookmarked(): void {
-    this.bookmarkService.removeBookmarked(this.selectedVerse());
+    if (!this.selectedVerse()) return;
+    this.bookmarkService.removeBookmarked(this.selectedVerse()!);
   }
 
   copyVerse(): void {
@@ -278,6 +287,7 @@ export class Main implements OnInit {
         verse: 1,
       });
       this.selectChapter(newChapter);
+      this.selectedVerse.set(null);
     }
   }
 
@@ -292,6 +302,7 @@ export class Main implements OnInit {
         verse: 1,
       });
       this.selectChapter(newChapter);
+      this.selectedVerse.set(null);
     }
   }
 
@@ -308,6 +319,8 @@ export class Main implements OnInit {
       chapter,
       verse: 1,
     });
+
+    this.selectedVerse.set(null);
   }
 
   private onSearch(query: string): void {
