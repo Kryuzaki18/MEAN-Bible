@@ -120,7 +120,22 @@
 
     <p-scrollpanel class="verses-container dark:bg-[var(--p-primary-950)] pb-5">
       @if (isLoading()) {
-        <div class="flex items-center justify-center size-full">Loading...</div>
+        <div
+          class="flex items-center justify-center gap-2 size-full text-md text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)]"
+        >
+          <span>Loading</span>
+          <div class="flex items-end gap-1 mt-2">
+            <span
+              class="w-1.5 h-1.5 bg-[var(--p-primary-600)] dark:bg-[var(--p-primary-100)] rounded-full animate-bounce [animation-delay:-0.3s]"
+            ></span>
+            <span
+              class="w-1.5 h-1.5 bg-[var(--p-primary-600)] dark:bg-[var(--p-primary-100)] rounded-full animate-bounce [animation-delay:-0.15s]"
+            ></span>
+            <span
+              class="w-1.5 h-1.5 bg-[var(--p-primary-600)] dark:bg-[var(--p-primary-100)] rounded-full animate-bounce"
+            ></span>
+          </div>
+        </div>
       } @else {
         @for (verse of verses(); track $index) {
           @let isBookmarked =
