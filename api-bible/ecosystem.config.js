@@ -3,9 +3,9 @@ module.exports = {
     {
       name: "api",
       script: "dist/server.js",
-      instances: "max",
-      exec_mode: "cluster",
-      node_args: "--max-old-space-size=512",
+      instances: 1,                    // single instance on Render
+      exec_mode: "fork",               // fork, not cluster
+      node_args: "--max-old-space-size=256",  // cap heap explicitly
       env: {
         NODE_ENV: "development",
       },
@@ -13,7 +13,7 @@ module.exports = {
         NODE_ENV: "production",
       },
       watch: false,
-      max_memory_restart: "500M",
+      max_memory_restart: "400M",
       error_file: "logs/err.log",
       out_file: "logs/out.log",
       log_date_format: "YYYY-MM-DD HH:mm:ss Z",
