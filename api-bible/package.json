@@ -3,7 +3,15 @@
     "start": "ts-node-dev src/server.ts",
     "build": "tsc",
     "local-start": "node dist/server.js",
-    "seed": "ts-node src/seeds/runSeeds.ts"
+    "seed": "ts-node src/seeds/runSeeds.ts",
+    "pm2:start": "npm run build && pm2 start ecosystem.config.js --env production",
+    "pm2:stop": "pm2 stop api",
+    "pm2:restart": "pm2 restart api",
+    "pm2:reload": "pm2 reload api",
+    "pm2:delete": "pm2 delete api",
+    "pm2:logs": "pm2 logs api",
+    "pm2:status": "pm2 status",
+    "pm2:monit": "pm2 monit"
   },
   "engines": {
     "node": "24.x"
@@ -16,7 +24,8 @@
     "express-rate-limit": "^8.4.0",
     "helmet": "^8.1.0",
     "hpp": "^0.2.3",
-    "mongoose": "^9.3.1"
+    "mongoose": "^9.3.1",
+    "pm2": "^6.0.14"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
