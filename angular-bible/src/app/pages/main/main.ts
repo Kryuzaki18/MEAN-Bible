@@ -52,6 +52,7 @@ import { Popover } from 'primeng/popover';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { DrawerModule } from 'primeng/drawer';
+import { AudioService } from '../../shared/services/audi.service';
 
 @Component({
   selector: 'app-main',
@@ -79,6 +80,7 @@ import { DrawerModule } from 'primeng/drawer';
 export class Main implements OnInit {
   private readonly router = inject(Router);
   private readonly bibleService = inject(BibleService);
+  private readonly audioService = inject(AudioService);
   private readonly toastService = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
   readonly appSettings = inject(AppSettingsService);
@@ -333,6 +335,20 @@ export class Main implements OnInit {
 
   toggleSubHeader(): void {
     this.isSubHeaderVisible.set(!this.isSubHeaderVisible());
+  }
+
+  audio(): void {
+    const book = this.paramsBook()?.name || defaultBook;
+    const chapter = this.paramsChapter() || 1;
+
+    this.audioService
+      .getAudio(book, chapter)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.play();
+      });
   }
 
   private onSearch(query: string): void {

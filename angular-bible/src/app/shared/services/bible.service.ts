@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, shareReplay, catchError, throwError } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 
 // Environment
 import { environment } from '../../../environments/environment';
@@ -10,54 +10,34 @@ import { Book } from '../interfaces/book';
 import { Verse } from '../interfaces/verse';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BibleService {
-  private baseUrl = environment.apiUrl;
-
-  private cache: { [key: string]: Observable<any> } = {};
-
-  constructor(private http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.apiUrl;
 
   getBooks(): Observable<Book[]> {
-    const key = 'books';
-
-    if (!this.cache[key]) {
-      this.cache[key] = this.http
-        .get<Book[]>(`${this.baseUrl}/books`)
-        .pipe(
-          shareReplay(1),
-          catchError(this.handleError)
-        );
-    }
-
-    return this.cache[key];
+    return this.http.get<Book[]>(`${this.baseUrl}/books`).pipe(catchError(this.handleError));
   }
-  
+
   getChapter(book: string, chapter: number): Observable<Verse> {
     return this.http
       .get<Verse>(`${this.baseUrl}/chapter/${book}/${chapter}`)
-      .pipe(
-        catchError(this.handleError)
-      );
+      .pipe(catchError(this.handleError));
   }
 
   getVerse(book: string, chapter: number, verse: number): Observable<Verse> {
     return this.http
       .get<Verse>(`${this.baseUrl}/verse/${book}/${chapter}/${verse}`)
-      .pipe(
-        catchError(this.handleError)
-      );
+      .pipe(catchError(this.handleError));
   }
 
   search(query: string): Observable<any> {
     return this.http
       .get(`${this.baseUrl}/search`, {
-        params: { q: query }
+        params: { q: query },
       })
-      .pipe(
-        catchError(this.handleError)
-      );
+      .pipe(catchError(this.handleError));
   }
 
   private handleError(error: any) {
@@ -65,8 +45,8 @@ export class BibleService {
 
     if (error.status === 0) {
       message = 'Network error';
-    } else if (error.error?.message) {
-      message = error.error.message;
+    } else if (error?.message) {
+      message = error.message;
     }
 
     return throwError(() => new Error(message));

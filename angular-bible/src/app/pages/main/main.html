@@ -86,31 +86,44 @@
         </div>
 
         <div
-          class="book-chapter-container flex flex-col items-center justify-center dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
+          class="book-chapter-container flex items-center justify-between min-lg:px-30 dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
         >
-          <div
-            class="flex items-center gap-1 px-3 py-1 bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
-            (click)="op.toggle($event)"
-            pTooltip="What is this book about?"
-            tooltipPosition="bottom"
-          >
-            <span class="pi pi-info-circle animate-bounce [animation-delay:-0.3s]"></span>
-            <span class="uppercase text-sm lg:text-lg font-semibold">{{ paramsBook()?.name }}</span>
-          </div>
-          <div class="mt-1">
-            <span
-              class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-3xl lg:text-4xl"
-            >
-              {{ paramsChapter() || 1 }}
-            </span>
-          </div>
           <div>
             <span
-              class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-md lg:text-lg"
-            >
-              Chapter
-            </span>
+              (click)="audio()"
+              class="pi pi-volume-up cursor-pointer p-2 rounded-full bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-200)] dark:border-[var(--p-primary-400)]"
+            ></span>
           </div>
+
+          <div class="flex flex-col items-center justify-center">
+            <div
+              class="flex items-center gap-1 px-3 py-1 bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
+              (click)="op.toggle($event)"
+              pTooltip="What is this book about?"
+              tooltipPosition="bottom"
+            >
+              <span class="pi pi-info-circle animate-bounce [animation-delay:-0.3s]"></span>
+              <span class="uppercase text-sm lg:text-lg font-semibold">{{
+                paramsBook()?.name
+              }}</span>
+            </div>
+            <div class="mt-1">
+              <span
+                class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-3xl lg:text-4xl"
+              >
+                {{ paramsChapter() || 1 }}
+              </span>
+            </div>
+            <div>
+              <span
+                class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-md lg:text-lg"
+              >
+                Chapter
+              </span>
+            </div>
+          </div>
+
+          <div></div>
         </div>
       }
 

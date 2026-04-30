@@ -4,6 +4,7 @@ import {
   getVerse,
   getChapter,
   search,
+  audio,
 } from "../controllers/bibleController";
 
 const router = Router();
@@ -15,5 +16,6 @@ router.get("/books", getBooks);
 router.get("/verse/:book/:chapter/:verse", getVerse);
 router.get("/chapter/:book/:chapter", getChapter);
 router.get("/search", search);
+router.post("/audio", audio);
 
 export default router;
