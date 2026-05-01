@@ -60,11 +60,6 @@ export class Sidebar implements OnInit {
   readonly testament = signal<number>(0);
   readonly queryParams = toSignal(this.route.queryParamMap);
 
-  readonly testaments = [
-    { label: 'Old', value: 0 },
-    { label: 'New', value: 1 },
-  ];
-
   readonly isSidebarVisible = computed(() => this.appSettings.isSidebarVisible);
 
   readonly filteredBooks = computed(() => {
@@ -72,6 +67,19 @@ export class Sidebar implements OnInit {
       return this.allBooks().filter((book) => book.testament.toLowerCase() === 'old');
     }
     return this.allBooks().filter((book) => book.testament.toLowerCase() === 'new');
+  });
+
+  readonly testaments = computed(() => {
+    return [
+      {
+        label: `Old (${this.allBooks().filter((book) => book.testament.toLowerCase() === 'old').length})`,
+        value: 0,
+      },
+      {
+        label: `New (${this.allBooks().filter((book) => book.testament.toLowerCase() === 'new').length})`,
+        value: 1,
+      },
+    ];
   });
 
   readonly selectedBook = computed(() => {
