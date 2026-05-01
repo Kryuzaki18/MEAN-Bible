@@ -106,10 +106,18 @@ export class Sidebar implements OnInit {
 
         requestAnimationFrame(() => {
           const buttonEl = this.bookButtons.get(index);
-          buttonEl?.nativeElement.scrollIntoView({
+          if (!buttonEl) return;
+
+          const el = buttonEl.nativeElement;
+
+          const scrollContainer = el.closest('.p-scrollpanel-content') as HTMLElement;
+          if (!scrollContainer) return;
+
+          const offset = el.offsetTop - scrollContainer.offsetTop - 8;
+
+          scrollContainer.scrollTo({
+            top: offset,
             behavior: 'smooth',
-            block: 'start',
-            inline: 'nearest',
           });
         });
       });

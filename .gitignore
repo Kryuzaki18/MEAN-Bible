@@ -49,3 +49,4 @@
 /api-bible/node_modules
 /api-bible/dist
 /api-bible/.env
+/api-bible/logs

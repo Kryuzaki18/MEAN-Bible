@@ -26,7 +26,7 @@
     (onChange)="updateTestament($event.value)"
   />
 
-  <p-scrollpanel class="px-2" style="width: 100%; max-height: 580px">
+  <p-scrollpanel class="px-2" style="width: 100%; max-height: 540px">
     @for (bookmark of filteredBookmarks() | sortedDates; track $index) {
       <div
         class="font-light border-dashed border-b border-[var(--p-primary-500)] dark:border-[var(--p-primary-700)] py-3"
@@ -44,7 +44,7 @@
           }}</span>
         </div>
 
-        <div class="flex items-center justify-between max-sm:flex-col max-sm:items-start">
+        <div class="flex items-start justify-between max-sm:flex-col gap-2">
           <div class="flex flex-col items-start">
             <div class="flex items-start">
               <div class="flex items-center justify-center text-center mr-2 mt-1.5">
@@ -57,6 +57,10 @@
               <div>
                 <span
                   class="text-xs text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] font-light"
+                  [ngClass]="{
+                    'text-yellow-700 dark:text-yellow-200 font-semibold':
+                      isAudioLoading() && isPlayingAudio(bookmark),
+                  }"
                   >{{ bookmark.text }}</span
                 >
               </div>
@@ -68,37 +72,50 @@
             >
           </div>
 
-          <div class="w-20 flex justify-end max-sm:justify-center max-sm:w-full">
-            <div class="flex flex-col gap-4 max-sm:flex-row max-sm:mt-2">
+          <div class="flex justify-end max-sm:justify-center max-sm:w-full">
+            <div class="flex flex-row gap-1 max-sm:flex-row max-sm:mt-2">
               <button
-                class="cursor-pointer text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] py-1 px-1.5"
+                type="button"
+                (click)="audio(bookmark)"
+                [disabled]="isAudioLoading()"
+                [pTooltip]="isAudioLoading() ? 'Audio is loading...' : 'Play audio'"
+                [tooltipDisabled]="isAudioLoading() && !isPlayingAudio(bookmark)"
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-xs"
+                class="pi w-8 h-8 cursor-pointer text-[var(--p-primary-500)] dark:text-[var(--p-primary-200)] disabled:cursor-not-allowed"
+                [ngClass]="{
+                  'animate-pulse pi-volume-up': isAudioLoading() && isPlayingAudio(bookmark),
+                  'pi-volume-off !text-sm': !isAudioLoading() || !isPlayingAudio(bookmark),
+                }"
+              ></button>
+
+              <button
+                class="w-8 h-8 cursor-pointer text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] py-1 px-1.5"
                 (click)="copyVerse(bookmark)"
+                [pTooltip]="isSelectedCopyVerse(bookmark) ? 'Verse copied' : 'Copy verse'"
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-xs"
               >
-                @if (
-                  selectedCopyVerse()?.book === bookmark.book &&
-                  selectedCopyVerse()?.chapter === bookmark.chapter &&
-                  selectedCopyVerse()?.verse === bookmark.verse
-                ) {
+                @if (isSelectedCopyVerse(bookmark)) {
                   <span class="pi pi-check text-green-400"></span>
                 } @else {
-                  <span
-                    class="pi pi-copy text-green-400 hover:text-green-500"
-                    pTooltip="Copy verse"
-                    tooltipPosition="bottom"
-                    tooltipStyleClass="text-xs"
-                  ></span>
+                  <span class="pi pi-copy text-green-400 hover:text-green-500"></span>
                 }
               </button>
 
               <button
-                class="cursor-pointer text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] py-1 px-1.5"
+                class="w-8 h-8 cursor-pointer text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] py-1 px-1.5 disabled:cursor-not-allowed"
                 (click)="removeBookmarked(bookmark)"
+                pTooltip="Remove bookmark"
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-xs"
+                [disabled]="isAudioLoading()"
               >
                 <span
-                  class="pi pi-trash text-red-400 hover:text-red-500"
-                  pTooltip="Remove bookmark"
-                  tooltipPosition="bottom"
-                  tooltipStyleClass="text-xs"
+                  class="pi pi-trash text-red-400"
+                  [ngClass]="{
+                    'hover:text-red-500': !isAudioLoading(),
+                  }"
                 ></span>
               </button>
             </div>

@@ -1,7 +1,9 @@
-import { Component, signal, inject, computed } from '@angular/core';
+import { Component, signal, inject, computed, DestroyRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatePipe, LowerCasePipe } from '@angular/common';
+import { DatePipe, LowerCasePipe, NgClass } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { fromEvent, take } from 'rxjs';
 
 // Interfaces
 import { BookmarkedVerse, Verse } from '../../interfaces/verse';
@@ -13,6 +15,7 @@ import { SortedDatesPipe } from '../../pipes/sorted-dates.pipes';
 import { BookmarkService } from '../../services/bookmark.service';
 import { ToastService } from '../../services/toast.service';
 import { AppSettingsService } from '../../services/app-settings.service';
+import { AudioService } from '../../services/audi.service';
 
 // PrimeNG Modules
 import { CardModule } from 'primeng/card';
@@ -26,11 +29,12 @@ import { SelectButtonModule } from 'primeng/selectbutton';
   selector: 'app-bookmarks',
   imports: [
     FormsModule,
-    ButtonModule,
-    CardModule,
+    NgClass,
     DatePipe,
     LowerCasePipe,
     SortedDatesPipe,
+    ButtonModule,
+    CardModule,
     ScrollPanelModule,
     TooltipModule,
     SelectButtonModule,
@@ -43,13 +47,16 @@ export class Bookmarks {
   private readonly bookmarkService = inject(BookmarkService);
   private readonly appSettings = inject(AppSettingsService);
   private readonly toastService = inject(ToastService);
+  private readonly audioService = inject(AudioService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   readonly ref = inject(DynamicDialogRef);
+  private destroyRef = inject(DestroyRef);
 
   readonly bookmarks = this.bookmarkService.bookmarks;
   readonly selectedCopyVerse = signal<Verse | null>(null);
-
+  readonly selectedAudioVerse = signal<Verse | null>(null);
+  readonly isAudioLoading = signal<boolean>(false);
   readonly testament = signal<number>(0);
 
   readonly filteredBookmarks = computed(() => {
@@ -71,6 +78,22 @@ export class Bookmarks {
       { label: `New (${newTestament.length})`, value: 1 },
     ];
   });
+
+  isSelectedCopyVerse(bookmark: BookmarkedVerse): boolean {
+    return (
+      this.selectedCopyVerse()?.book === bookmark.book &&
+      this.selectedCopyVerse()?.chapter === bookmark.chapter &&
+      this.selectedCopyVerse()?.verse === bookmark.verse
+    );
+  }
+
+  isPlayingAudio(bookmark: BookmarkedVerse): boolean {
+    return (
+      this.selectedAudioVerse()?.book === bookmark.book &&
+      this.selectedAudioVerse()?.chapter === bookmark.chapter &&
+      this.selectedAudioVerse()?.verse === bookmark.verse
+    );
+  }
 
   updateTestament(testament: number): void {
     this.testament.set(testament);
@@ -123,5 +146,54 @@ export class Bookmarks {
           console.error('Failed to copy verse:', err);
         });
     }
+  }
+
+  audio(bookmark: BookmarkedVerse): void {
+    if (this.isAudioLoading()) {
+      return;
+    }
+
+    this.isAudioLoading.set(true);
+    this.selectedAudioVerse.set(bookmark);
+
+    const payload = {
+      book: bookmark.book,
+      chapter: bookmark.chapter,
+      verse: bookmark.verse,
+    };
+
+    this.audioService
+      .getAudio(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+
+          const cleanup = () => {
+            URL.revokeObjectURL(url);
+            this.isAudioLoading.set(false);
+          };
+
+          fromEvent(audio, 'loadedmetadata')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => audio.play());
+
+          fromEvent(audio, 'ended')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => cleanup());
+
+          fromEvent(audio, 'error')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+              this.toastService.error('Audio playback failed');
+              cleanup();
+            });
+        },
+        error: (err) => {
+          this.toastService.error(err.message);
+          this.isAudioLoading.set(false);
+        },
+      });
   }
 }

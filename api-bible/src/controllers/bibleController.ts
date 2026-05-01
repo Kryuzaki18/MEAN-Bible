@@ -93,7 +93,11 @@ export const getBooks = async (_req: Request, res: Response): Promise<void> => {
 
 export const audio = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const { book, chapter } = _req.body;
+    const { book, chapter, verse } = _req.body;
+    if (!book || !chapter) {
+      res.status(404).json({ message: "Missing required fields" });
+      return;
+    }
 
     const foundBook = await Books.findOne({
       name: book,
@@ -104,24 +108,33 @@ export const audio = async (_req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const verses = await Verses.find({
+    let verses = await Verses.find({
       book: foundBook.name,
       chapter: Number(chapter),
-    }).sort({ verse: 1 });
+    })
+      .where("verse")
+      .gte(verse ? Number(verse) : 0)
+      .limit(verse ? 1 : 0)
+      .sort({ verse: 1 });
 
-    if (!verses) {
+    if (verses.length === 0) {
       res.status(404).json({ message: "Chapter not found" });
       return;
     }
 
-    let text = "";
+    let outputText = "";
+    if (verses.length === 1) {
+      outputText = `The book of ${book} chapter ${chapter} verse ${verse}, ${verses[0].text}`;
+    } else {
+      let text = "";
 
-    verses.forEach((verse) => {
-      text += verse.verse + " " + verse.text + " ";
-    });
+      verses.forEach((verse) => {
+        text += verse.text;
+      });
+      outputText = `The book of ${book} chapter ${chapter}, ${text}`;
+    }
 
-    const sampleText = `The book of ${book} chapter ${chapter}, ${text}`;
-    const audioBuffer = await speak(sampleText);
+    const audioBuffer = await speak(outputText);
     res.setHeader("Content-Type", "audio/mpeg");
     res.setHeader("Content-Length", audioBuffer.length);
     res.end(audioBuffer);

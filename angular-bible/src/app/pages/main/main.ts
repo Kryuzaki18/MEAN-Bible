@@ -18,6 +18,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, skip, take, tap } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
 
 // Common Components
 import { Sidebar } from '../../commons/sidebar/sidebar';
@@ -40,6 +41,7 @@ import { BookmarkService } from '../../shared/services/bookmark.service';
 import { ToastService } from '../../shared/services/toast.service';
 import { AppSettingsService } from '../../shared/services/app-settings.service';
 import { LocalStorageService } from '../../shared/services/local-storage.service';
+import { AudioService } from '../../shared/services/audi.service';
 
 // PrimeNG Modules
 import { InputTextModule } from 'primeng/inputtext';
@@ -52,7 +54,6 @@ import { Popover } from 'primeng/popover';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { DrawerModule } from 'primeng/drawer';
-import { AudioService } from '../../shared/services/audi.service';
 
 @Component({
   selector: 'app-main',
@@ -97,6 +98,7 @@ export class Main implements OnInit {
   private readonly isFirstLoad = signal<boolean>(true);
   readonly isSubHeaderVisible = signal<boolean>(true);
   readonly isLoading = signal<boolean>(true);
+  readonly isAudioLoading = signal<boolean>(false);
   readonly allBooks = signal<Book[]>([]);
   readonly selectedChapter = signal<number>(1);
   readonly verses = signal<Verse[]>([]);
@@ -225,12 +227,21 @@ export class Main implements OnInit {
         const index = verses.findIndex((v) => v.verse === verse);
         if (index === -1) return;
         this.isLoading.set(false);
+
         requestAnimationFrame(() => {
           const verseEl = this.versesList.get(index);
-          verseEl?.nativeElement.scrollIntoView({
+          if (!verseEl) return;
+
+          const el = verseEl.nativeElement;
+
+          const scrollContainer = el.closest('.p-scrollpanel-content') as HTMLElement;
+          if (!scrollContainer) return;
+
+          const offset = el.offsetTop - scrollContainer.offsetTop - 8;
+
+          scrollContainer.scrollTo({
+            top: offset,
             behavior: 'smooth',
-            block: 'start',
-            inline: 'nearest',
           });
         });
       });
@@ -338,16 +349,46 @@ export class Main implements OnInit {
   }
 
   audio(): void {
+    if (this.isAudioLoading()) {
+      return;
+    }
+
+    this.isAudioLoading.set(true);
     const book = this.paramsBook()?.name || defaultBook;
     const chapter = this.paramsChapter() || 1;
 
     this.audioService
-      .getAudio(book, chapter)
+      .getAudio({ book, chapter })
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((blob: Blob) => {
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        audio.play();
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+
+          const cleanup = () => {
+            URL.revokeObjectURL(url);
+            this.isAudioLoading.set(false);
+          };
+
+          fromEvent(audio, 'loadedmetadata')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => audio.play());
+
+          fromEvent(audio, 'ended')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => cleanup());
+            
+          fromEvent(audio, 'error')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+              this.toastService.error('Audio playback failed');
+              cleanup();
+            });
+        },
+        error: (err) => {
+          this.toastService.error(err.message);
+          this.isAudioLoading.set(false);
+        },
       });
   }
 
