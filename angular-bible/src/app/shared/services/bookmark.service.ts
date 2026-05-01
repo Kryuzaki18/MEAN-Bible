@@ -57,17 +57,12 @@ export class BookmarkService {
       return;
     }
 
+    const { book, chapter, verse } = selectedVerse || {};
     const updatedBookmarked = this.bookmarks().filter(
-      (item) =>
-        !(
-          item.book === selectedVerse.book &&
-          item.chapter === selectedVerse.chapter &&
-          item.verse === selectedVerse.verse
-        ),
+      (item) => !(item.book === book && +item.chapter === +chapter && +item.verse === +verse),
     );
-    this.localStorageService.updateLocalStorageSignal(
-      storage.BOOKMARKS,
-      updatedBookmarked,
-    );
+
+    this.localStorageService.updateLocalStorageSignal(storage.BOOKMARKS, updatedBookmarked);
+    this.toastService.success(`${book} ${chapter}:${verse}`, `has been removed from bookmarks.`);
   }
 }

@@ -1,10 +1,14 @@
 <div class="flex flex-col">
   <div class="bookmarks-header flex items-center justify-between p-2">
     <h2 class="flex items-center gap-2 font-bold">
-      <span class="text-[var(--p-primary-700)] dark:text-[var(--p-primary-100)]">My Bookmarks</span>
+      <span
+        class="pi pi-bookmark-fill text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+      ></span>
+
+      <span class="text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]">My Bookmarks</span>
       @if (bookmarks().length > 0) {
         <span
-          class="bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-600)] text-[var(--p-primary-700)] dark:text-[var(--p-primary-100)] rounded py-0.5 px-1.5 flex items-center justify-center text-xs"
+          class="bg-[var(--p-primary-500)] text-[var(--p-primary-50)] dark:bg-[var(--p-primary-200)] dark:text-[var(--p-primary-800)] rounded py-0.5 px-1.5 text-xs font-semibold"
         >
           {{ bookmarks().length }}
         </span>
@@ -31,42 +35,26 @@
   <p-scrollpanel class="px-2 pb-2 bookmarks-content">
     @for (bookmark of filteredBookmarks() | sortedDates; track $index) {
       <div
-        class="font-light border-dashed border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)] py-3"
+        class="flex flex-col gap-2 border-dashed border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)] py-3"
         [class.border-none]="$index === filteredBookmarks().length - 1"
       >
-        <div class="text-sm tracking-widest">
-          <span
-            class="font-bold text-[var(--p-primary-500)] dark:text-[var(--p-primary-50)] underline cursor-pointer"
-            (click)="navigateBookmark(bookmark)"
-            >"{{ bookmark.book }}"</span
-          >
-          Chapter
-          <span class="font-bold text-[var(--p-primary-500)] dark:text-[var(--p-primary-50)]">{{
-            bookmark.chapter
-          }}</span>
+        <div
+          class="font-semibold text-sm tracking-wide flex gap-1 items-center text-[var(--p-primary-500)] dark:text-[var(--p-primary-50)]"
+        >
+          <span>"{{ bookmark.book }}"</span>
+          <span>{{ bookmark.chapter }}:{{ bookmark.verse }}</span>
         </div>
 
         <div class="flex items-start justify-between max-sm:flex-col gap-2">
-          <div class="flex flex-col items-start">
-            <div class="flex items-start">
-              <div class="flex items-center justify-center text-center mr-2 mt-1.5">
-                <span
-                  class="text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] text-xs font-bold"
-                >
-                  {{ bookmark.verse }}
-                </span>
-              </div>
-              <div>
-                <span
-                  class="text-xs text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] font-light"
-                  [ngClass]="{
-                    'text-yellow-700 dark:text-yellow-200 font-semibold':
-                      isAudioLoading() && isPlayingAudio(bookmark),
-                  }"
-                  >{{ bookmark.text }}</span
-                >
-              </div>
-            </div>
+          <div class="flex flex-col items-start gap-1 font-light">
+            <span
+              class="text-xs text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)]"
+              [ngClass]="{
+                'text-yellow-700 dark:text-yellow-200 font-semibold':
+                  isAudioLoading() && isPlayingAudio(bookmark),
+              }"
+              >{{ bookmark.text }}</span
+            >
 
             <span class="text-[10px] mt-1 text-gray-500 dark:text-gray-300 italic"
               >{{ bookmark.dateAdded | date: 'MMM d, y h:mm'
@@ -77,6 +65,14 @@
           <div class="flex justify-end max-sm:justify-center max-sm:w-full">
             <div class="flex flex-row gap-1 max-sm:flex-row max-sm:mt-2">
               <button
+                class="w-[30px] h-[30px] pi pi-eye cursor-pointer py-1 px-1.5 text-stone-500 dark:text-stone-300 hover:!font-semibold"
+                (click)="navigateBookmark(bookmark)"
+                [pTooltip]="'View verse'"
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-xs"
+              ></button>
+
+              <button
                 type="button"
                 (click)="audio(bookmark)"
                 [disabled]="isAudioLoading()"
@@ -84,42 +80,37 @@
                 [tooltipDisabled]="isAudioLoading() && !isPlayingAudio(bookmark)"
                 tooltipPosition="bottom"
                 tooltipStyleClass="text-xs"
-                class="pi w-8 h-8 cursor-pointer text-[var(--p-primary-500)] dark:text-[var(--p-primary-200)] disabled:cursor-not-allowed"
+                class="pi w-[30px] h-[30px] cursor-pointer text-[var(--p-primary-400)] dark:text-[var(--p-primary-200)] disabled:cursor-not-allowed"
                 [ngClass]="{
                   'animate-pulse pi-volume-up': isAudioLoading() && isPlayingAudio(bookmark),
-                  'pi-volume-off !text-sm': !isAudioLoading() || !isPlayingAudio(bookmark),
+                  'pi-volume-off !text-sm hover:text-[var(--p-primary-600)] dark:hover:text-[var(--p-primary-100)] hover:!font-semibold':
+                    !isAudioLoading() || !isPlayingAudio(bookmark),
                 }"
               ></button>
 
               <button
-                class="w-8 h-8 cursor-pointer text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] py-1 px-1.5"
+                class="w-[30px] h-[30px] pi cursor-pointer py-1 px-1.5 text-green-400 hover:text-green-600 dark:text-green-600 dark:hover:text-green-400 hover:!font-semibold"
                 (click)="copyVerse(bookmark)"
                 [pTooltip]="isSelectedCopyVerse(bookmark) ? 'Verse copied' : 'Copy verse'"
                 tooltipPosition="bottom"
                 tooltipStyleClass="text-xs"
-              >
-                @if (isSelectedCopyVerse(bookmark)) {
-                  <span class="pi pi-check text-green-400"></span>
-                } @else {
-                  <span class="pi pi-copy text-green-400 hover:text-green-500"></span>
-                }
-              </button>
+                [ngClass]="{
+                  'pi-check': isSelectedCopyVerse(bookmark),
+                  'pi-copy': !isSelectedCopyVerse(bookmark),
+                }"
+              ></button>
 
               <button
-                class="w-8 h-8 cursor-pointer text-[var(--p-primary-700)] dark:text-[var(--p-primary-50)] py-1 px-1.5 disabled:cursor-not-allowed"
+                class="w-[30px] h-[30px] pi pi-trash cursor-pointer py-1 px-1.5 text-red-400 dark:text-red-600 disabled:cursor-not-allowed hover:!font-semibold"
                 (click)="removeBookmarked(bookmark)"
                 pTooltip="Remove bookmark"
                 tooltipPosition="bottom"
                 tooltipStyleClass="text-xs"
                 [disabled]="isAudioLoading()"
-              >
-                <span
-                  class="pi pi-trash text-red-400"
-                  [ngClass]="{
-                    'hover:text-red-500': !isAudioLoading(),
-                  }"
-                ></span>
-              </button>
+                [ngClass]="{
+                  'hover:text-red-600 dark:hover:text-red-400': !isAudioLoading(),
+                }"
+              ></button>
             </div>
           </div>
         </div>
@@ -127,7 +118,11 @@
     }
 
     @if (filteredBookmarks().length === 0) {
-      <p class="text-center text-gray-500 mt-4 text-sm">No bookmarks yet.</p>
+      <p
+        class="text-sm h-full flex items-center justify-center text-[var(--p-primary-400)] dark:text-[var(--p-primary-200)]"
+      >
+        No bookmarks yet.
+      </p>
     }
   </p-scrollpanel>
 </div>

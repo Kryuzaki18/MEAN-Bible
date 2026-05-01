@@ -32,12 +32,12 @@
           class="filters-container flex items-center justify-between gap-1 px-2 max-md:pt-2 min-lg:px-30 dark:bg-[var(--p-primary-900)]"
         >
           <button
-            class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer disabled:text-stone-500 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
+            class="flex items-center justify-center gap-2 h-[40px] max-lg:w-[40px] px-2 rounded cursor-pointer disabled:text-stone-300 disabled:dark:text-stone-600 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
             [disabled]="isFirstChapter()"
             (click)="previousChapter()"
           >
             <span class="pi pi-chevron-left"></span>
-            <span class="hidden lg:block text-xs">Previous Chapter</span>
+            <span class="hidden min-lg:block text-xs">Previous Chapter</span>
           </button>
 
           <div class="flex items-center justify-center gap-1 max-sm:flex-col">
@@ -47,7 +47,7 @@
               optionLabel="label"
               optionValue="chapter"
               placeholder="Select a Chapter"
-              class="w-[220px] max-md:h-8 max-md:leading-4"
+              class="w-[220px] max-sm:h-8 max-sm:leading-4"
               (ngModelChange)="selectChapter($event)"
             />
 
@@ -58,12 +58,12 @@
                   type="text"
                   pInputText
                   placeholder="Search"
-                  class="max-md:h-8 max-md:leading-4 placeholder:text-sm"
+                  class="max-sm:h-8 max-sm:leading-4 placeholder:text-sm"
                   [formControl]="searchControl"
                 />
                 <p-inputgroup-addon>
                   <p-button
-                    class="max-md:h-7"
+                    class="max-sm:h-7"
                     (click)="clearSearch()"
                     icon="pi pi-times"
                     [text]="true"
@@ -76,11 +76,11 @@
           </div>
 
           <button
-            class="flex items-center justify-center gap-2 h-10 max-md:h-7 px-2 rounded cursor-pointer disabled:text-stone-500 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
+            class="flex items-center justify-center gap-2 h-[40px] max-lg:w-[40px] px-2 rounded cursor-pointer disabled:text-stone-300 disabled:dark:text-stone-600 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
             [disabled]="isLastChapter()"
             (click)="nextChapter()"
           >
-            <span class="hidden lg:block text-xs">Next Chapter</span>
+            <span class="hidden min-lg:block text-xs">Next Chapter</span>
             <span class="pi pi-chevron-right"></span>
           </button>
         </div>
@@ -97,7 +97,7 @@
               [tooltipDisabled]="isAudioPlaying()"
               tooltipPosition="bottom"
               tooltipStyleClass="text-xs"
-              class="pi cursor-pointer w-8 h-8 rounded-full disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-600)]"
+              class="shadow-sm pi cursor-pointer w-8 h-8 rounded-full disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-600)]"
               [ngClass]="{
                 'animate-pulse pi-volume-up text-yellow-700 dark:text-yellow-200 font-semibold':
                   isAudioAllPlaying(),
@@ -140,11 +140,11 @@
       }
 
       <div
-        class="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer z-10 absolute right-0 mr-15 bottom-0 mx-auto -mb-3 bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-200)] dark:border-[var(--p-primary-400)]"
+        class="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer z-10 absolute right-0 mr-15 bottom-0 mx-auto -mb-3 bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-800)] border border-[var(--p-primary-200)] dark:border-[var(--p-primary-500)]"
         (click)="toggleSubHeader()"
       >
         <span
-          class="pi !text-sm text-[var(--p-primary-300)] dark:text-[var(--p-primary-100)]"
+          class="pi !text-sm text-[var(--p-primary-300)] dark:text-[var(--p-primary-100)] animate-bounce"
           [ngClass]="{
             'pi-angle-double-up': isSubHeaderVisible(),
             'pi-angle-double-down': !isSubHeaderVisible(),
@@ -203,7 +203,7 @@
               #targetElement
               (click)="openPopoverVerseActions($event, verse, targetElement)"
               [ngClass]="{
-                'bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-800)] border !font-semibold':
+                'bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-800)] border !font-semibold':
                   isBookmarked,
                 'font-semibold':
                   selectedVerse()?.verse === verse.verse ||
