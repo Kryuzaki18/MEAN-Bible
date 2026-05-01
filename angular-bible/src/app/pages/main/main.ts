@@ -98,12 +98,14 @@ export class Main implements OnInit {
   private readonly isFirstLoad = signal<boolean>(true);
   readonly isSubHeaderVisible = signal<boolean>(true);
   readonly isLoading = signal<boolean>(true);
-  readonly isAudioLoading = signal<boolean>(false);
+  readonly isAudioPlaying = signal<boolean>(false);
+  readonly isAudioAllPlaying = signal<boolean>(false);
   readonly allBooks = signal<Book[]>([]);
   readonly selectedChapter = signal<number>(1);
   readonly verses = signal<Verse[]>([]);
   readonly selectedVerse = signal<Verse | null>(null);
   readonly queryParams = toSignal(this.route.queryParamMap);
+  readonly selectedAudioVerse = signal<Verse | null>(null);
 
   private initialVerses: Verse[] = [];
 
@@ -349,11 +351,14 @@ export class Main implements OnInit {
   }
 
   audio(): void {
-    if (this.isAudioLoading()) {
+    if (this.isAudioAllPlaying() || this.isAudioPlaying()) {
       return;
     }
 
-    this.isAudioLoading.set(true);
+    this.selectedAudioVerse.set(null);
+    this.isAudioAllPlaying.set(true);
+    this.isAudioPlaying.set(false);
+
     const book = this.paramsBook()?.name || defaultBook;
     const chapter = this.paramsChapter() || 1;
 
@@ -367,7 +372,7 @@ export class Main implements OnInit {
 
           const cleanup = () => {
             URL.revokeObjectURL(url);
-            this.isAudioLoading.set(false);
+            this.isAudioAllPlaying.set(false);
           };
 
           fromEvent(audio, 'loadedmetadata')
@@ -387,9 +392,69 @@ export class Main implements OnInit {
         },
         error: (err) => {
           this.toastService.error(err.message);
-          this.isAudioLoading.set(false);
+          this.isAudioAllPlaying.set(false);
         },
       });
+  }
+
+  audioVerse(verse: Verse): void {
+    if (this.isAudioAllPlaying() || this.isAudioPlaying()) {
+      return;
+    }
+
+    this.selectedAudioVerse.set(verse);
+    this.isAudioPlaying.set(true);
+    this.isAudioAllPlaying.set(false);
+
+    const payload = {
+      book: verse.book,
+      chapter: verse.chapter,
+      verse: verse.verse,
+    };
+
+    this.audioService
+      .getAudio(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+
+          const cleanup = () => {
+            URL.revokeObjectURL(url);
+            this.isAudioPlaying.set(false);
+            this.selectedAudioVerse.set(null);
+          };
+
+          fromEvent(audio, 'loadedmetadata')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => audio.play());
+
+          fromEvent(audio, 'ended')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => cleanup());
+
+          fromEvent(audio, 'error')
+            .pipe(take(1), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+              this.toastService.error('Audio playback failed');
+              cleanup();
+            });
+        },
+        error: (err) => {
+          this.toastService.error(err.message);
+          this.isAudioPlaying.set(false);
+          this.selectedAudioVerse.set(null);
+        },
+      });
+  }
+
+  isPlayingAudio(verse: Verse): boolean {
+    return (
+      this.selectedAudioVerse()?.book === verse.book &&
+      this.selectedAudioVerse()?.chapter === verse.chapter &&
+      this.selectedAudioVerse()?.verse === verse.verse
+    );
   }
 
   private onSearch(query: string): void {

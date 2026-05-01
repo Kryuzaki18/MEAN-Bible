@@ -92,14 +92,16 @@
             <button
               type="button"
               (click)="audio()"
-              [disabled]="isAudioLoading()"
-              [pTooltip]="isAudioLoading() ? 'Audio is loading...' : 'Play audio'"
+              [disabled]="isAudioAllPlaying() || isAudioPlaying()"
+              [pTooltip]="isAudioAllPlaying() ? 'Audio is playing...' : 'Play entire chapter audio'"
+              [tooltipDisabled]="isAudioPlaying()"
               tooltipPosition="bottom"
               tooltipStyleClass="text-xs"
-              class="pi cursor-pointer w-8 h-8 rounded-full disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-200)] bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-200)] dark:border-[var(--p-primary-400)]"
+              class="pi cursor-pointer w-8 h-8 rounded-full disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-600)]"
               [ngClass]="{
-                'animate-pulse pi-volume-up': isAudioLoading(),
-                'pi-volume-off !text-sm': !isAudioLoading(),
+                'animate-pulse pi-volume-up text-yellow-700 dark:text-yellow-200 font-semibold':
+                  isAudioAllPlaying(),
+                'pi-volume-off !text-sm': !isAudioAllPlaying(),
               }"
             ></button>
           </div>
@@ -133,7 +135,7 @@
             </div>
           </div>
 
-          <div></div>
+          <div class="w-[40px]"></div>
         </div>
       }
 
@@ -188,7 +190,7 @@
             item.book === verse.book && +item.chapter === +verse.chapter && +item.verse === +verse.verse
         );
 
-          <div #versesList class="flex items-start min-lg:px-30 p-2 max-lg:px-2">
+          <div #versesList class="flex items-start justify-between min-lg:px-30 p-2 max-lg:px-2">
             <div class="flex p-1 rounded-xs flex-none w-[40px]">
               <span
                 class="text-md text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] font-semibold"
@@ -198,14 +200,16 @@
             </div>
 
             <div
+              #targetElement
+              (click)="openPopoverVerseActions($event, verse, targetElement)"
               [ngClass]="{
                 'bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-800)] border !font-semibold':
                   isBookmarked,
-                'font-semibold': selectedVerse()?.verse === verse.verse,
+                'font-semibold':
+                  selectedVerse()?.verse === verse.verse ||
+                  (isAudioPlaying() && isPlayingAudio(verse)),
               }"
-              class="px-2 rounded cursor-pointer text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-light"
-              #targetElement
-              (click)="openPopoverVerseActions($event, verse, targetElement)"
+              class="w-full px-2 rounded cursor-pointer text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-light"
             >
               <span class="md:text-lg text-xs">
                 @for (part of verse.text | highlight: searchControl.value; track $index) {
@@ -216,6 +220,29 @@
                   }
                 }
               </span>
+            </div>
+
+            <div class="w-[60px] flex justify-end">
+              <button
+                class="w-[30px] h-[30px] flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+                [disabled]="isAudioAllPlaying() || isAudioPlaying()"
+                (click)="audioVerse(verse)"
+                [pTooltip]="isAudioPlaying() ? 'Audio is playing...' : 'Play audio'"
+                [tooltipDisabled]="
+                  isAudioAllPlaying() || (isAudioPlaying() && !isPlayingAudio(verse))
+                "
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-xs"
+              >
+                <span
+                  class="pi pi-volume-up text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+                  [ngClass]="{
+                    'animate-pulse pi-volume-up text-yellow-700 dark:text-yellow-200 font-semibold':
+                      isAudioPlaying() && isPlayingAudio(verse),
+                    'pi-volume-off !text-sm': !isAudioPlaying() || !isPlayingAudio(verse),
+                  }"
+                ></span>
+              </button>
             </div>
           </div>
         }

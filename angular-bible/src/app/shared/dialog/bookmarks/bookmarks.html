@@ -1,5 +1,5 @@
-<div class="flex flex-col h-full overflow-hidden">
-  <div class="flex items-center justify-between p-2">
+<div class="flex flex-col">
+  <div class="bookmarks-header flex items-center justify-between p-2">
     <h2 class="flex items-center gap-2 font-bold">
       <span class="text-[var(--p-primary-700)] dark:text-[var(--p-primary-100)]">My Bookmarks</span>
       @if (bookmarks().length > 0) {
@@ -14,22 +14,24 @@
     <span class="pi pi-times cursor-pointer text-red-500 p-2" (click)="ref.close()"></span>
   </div>
 
-  <p-selectbutton
-    [allowEmpty]="false"
-    [options]="testaments()"
-    optionLabel="label"
-    optionValue="value"
-    dataKey="value"
-    size="small"
-    class="text-xs"
-    [(ngModel)]="testament"
-    (onChange)="updateTestament($event.value)"
-  />
+  <div class="testament-buttons">
+    <p-selectbutton
+      [allowEmpty]="false"
+      [options]="testaments()"
+      optionLabel="label"
+      optionValue="value"
+      dataKey="value"
+      size="small"
+      class="text-xs"
+      [(ngModel)]="testament"
+      (onChange)="updateTestament($event.value)"
+    />
+  </div>
 
-  <p-scrollpanel class="px-2" style="width: 100%; max-height: 540px">
+  <p-scrollpanel class="px-2 pb-2 bookmarks-content">
     @for (bookmark of filteredBookmarks() | sortedDates; track $index) {
       <div
-        class="font-light border-dashed border-b border-[var(--p-primary-500)] dark:border-[var(--p-primary-700)] py-3"
+        class="font-light border-dashed border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)] py-3"
         [class.border-none]="$index === filteredBookmarks().length - 1"
       >
         <div class="text-sm tracking-widest">
@@ -78,7 +80,7 @@
                 type="button"
                 (click)="audio(bookmark)"
                 [disabled]="isAudioLoading()"
-                [pTooltip]="isAudioLoading() ? 'Audio is loading...' : 'Play audio'"
+                [pTooltip]="isAudioLoading() ? 'Audio is playing...' : 'Play audio'"
                 [tooltipDisabled]="isAudioLoading() && !isPlayingAudio(bookmark)"
                 tooltipPosition="bottom"
                 tooltipStyleClass="text-xs"

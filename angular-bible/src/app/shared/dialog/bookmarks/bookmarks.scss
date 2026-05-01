@@ -1,0 +1,15 @@
+@use 'variables' as *;
+
+.bookmarks-header {
+  height: $bookmarks-header-height;
+  flex-shrink: 0;
+}
+
+.testament-buttons {
+  height: $bookmarks-subheader-height;
+  flex-shrink: 0;
+}
+
+.bookmarks-content {
+  height: calc(min(#{$bookmarks-height}, 90dvh) - #{$bookmarks-header-content-height});
+}

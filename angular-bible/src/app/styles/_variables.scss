@@ -3,4 +3,10 @@ $main-width: 1440px;
 $filters-container-height: 70px;
 $book-chapter-container-height: 110px;
 $sidebar-width: 220px;
-$sidebar-tabs-height: 60px; 
+$sidebar-tabs-height: 60px;
+
+// Bookmarks Dialog
+$bookmarks-height: 640px;
+$bookmarks-header-height: 50px;
+$bookmarks-subheader-height: 40px;
+$bookmarks-header-content-height: #{ $bookmarks-header-height + $bookmarks-subheader-height };

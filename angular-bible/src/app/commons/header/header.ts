@@ -43,8 +43,12 @@ export class Header {
         '960px': '75vw',
         '640px': '90vw',
       },
+      style: {
+        height: 'min(640px, 90dvh)',
+      },
       contentStyle: {
-        paddingRight: '0',
+        overflow: 'hidden',
+        paddingRight: 0,
       },
     });
   }
