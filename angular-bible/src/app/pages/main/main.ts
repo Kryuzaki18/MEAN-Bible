@@ -42,6 +42,7 @@ import { ToastService } from '../../shared/services/toast.service';
 import { AppSettingsService } from '../../shared/services/app-settings.service';
 import { LocalStorageService } from '../../shared/services/local-storage.service';
 import { AudioService } from '../../shared/services/audi.service';
+import { ExportService } from '../../shared/services/export.service';
 
 // PrimeNG Modules
 import { InputTextModule } from 'primeng/inputtext';
@@ -83,6 +84,7 @@ export class Main implements OnInit {
   private readonly bibleService = inject(BibleService);
   private readonly audioService = inject(AudioService);
   private readonly toastService = inject(ToastService);
+  private readonly exportService = inject(ExportService);
   private readonly route = inject(ActivatedRoute);
   readonly appSettings = inject(AppSettingsService);
   readonly bookmarkService = inject(BookmarkService);
@@ -382,7 +384,7 @@ export class Main implements OnInit {
           fromEvent(audio, 'ended')
             .pipe(take(1), takeUntilDestroyed(this.destroyRef))
             .subscribe(() => cleanup());
-            
+
           fromEvent(audio, 'error')
             .pipe(take(1), takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
@@ -455,6 +457,37 @@ export class Main implements OnInit {
       this.selectedAudioVerse()?.chapter === verse.chapter &&
       this.selectedAudioVerse()?.verse === verse.verse
     );
+  }
+
+  exportToWord(): void {
+    const fileName = this.formattedFileName();
+    this.exportService.exportToWord(this.formatExportData(), fileName);
+  }
+
+  exportToPDF(): void {
+    const fileName = this.formattedFileName();
+    this.exportService.exportToPDF(this.formatExportData(), fileName);
+  }
+
+  exportToExcel(): void {
+    const fileName = this.formattedFileName();
+    const sheetName = `${this.paramsBook()?.name} Chapter ${this.paramsChapter()}`;
+    this.exportService.exportToExcel(this.formatExportData(), fileName, sheetName);
+  }
+
+  private formattedFileName(): string {
+    const date = new Date().toDateString().replace(/\s/g, "_");
+    const bookChapter = `${this.paramsBook()?.name || defaultBook}_Chapter_${this.paramsChapter()}`;
+    const exportFileName = `KJV_${bookChapter}_${date}`;
+    return exportFileName;
+  }
+
+  private formatExportData() {
+    return this.verses().map((verse) => {
+      return {
+        [`"${verse.book}" Chapter ${verse.chapter}`]: `${verse.verse} ${verse.text}`,
+      };
+    });
   }
 
   private onSearch(query: string): void {

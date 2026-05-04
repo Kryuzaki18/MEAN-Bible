@@ -86,24 +86,50 @@
         </div>
 
         <div
-          class="book-chapter-container flex items-center justify-between min-lg:px-30 dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
+          class="book-chapter-container flex items-end pb-1.5 justify-between min-lg:px-30 dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
         >
-          <div class="max-lg:px-2">
-            <button
-              type="button"
-              (click)="audio()"
-              [disabled]="isAudioAllPlaying() || isAudioPlaying()"
-              [pTooltip]="isAudioAllPlaying() ? 'Audio is playing...' : 'Play entire chapter audio'"
-              [tooltipDisabled]="isAudioPlaying()"
-              tooltipPosition="bottom"
-              tooltipStyleClass="text-xs"
-              class="shadow-sm pi cursor-pointer w-8 h-8 rounded-full disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-600)]"
-              [ngClass]="{
-                'animate-pulse pi-volume-up text-yellow-700 dark:text-yellow-200 font-semibold':
-                  isAudioAllPlaying(),
-                'pi-volume-off !text-sm': !isAudioAllPlaying(),
-              }"
-            ></button>
+          <div class="flex flex-col gap-1 items-center w-[120px] max-lg:px-2">
+            <span
+              class="w-full text-center text-[11px] border-b border-dashed border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)] text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+              >Export</span
+            >
+            <div class="flex gap-2">
+              <button
+                type="button"
+                (click)="exportToWord()"
+                [pTooltip]="'Export to word'"
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-xs"
+                class="flex flex-col items-center justify-center cursor-pointer w-8 h-8 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+              >
+                <span class="pi pi-file-word !text-sm"></span>
+                <span class="text-[10px]">Word</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="exportToPDF()"
+                [pTooltip]="'Export to PDF'"
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-xs"
+                class="flex flex-col items-center justify-center cursor-pointer w-8 h-8 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+              >
+                <span class="pi pi-file-pdf !text-sm"></span>
+                <span class="text-[10px]">PDF</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="exportToExcel()"
+                [pTooltip]="'Export to excel'"
+                tooltipPosition="bottom"
+                tooltipStyleClass="text-xs"
+                class="flex flex-col items-center justify-center cursor-pointer w-8 h-8 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+              >
+                <span class="pi pi-file-excel !text-sm"></span>
+                <span class="text-[10px]">Excel</span>
+              </button>
+            </div>
           </div>
 
           <div class="flex flex-col items-center justify-center">
@@ -135,7 +161,23 @@
             </div>
           </div>
 
-          <div class="w-[40px]"></div>
+          <div class="max-lg:px-2 w-[120px] flex items-end justify-end">
+            <button
+              type="button"
+              (click)="audio()"
+              [disabled]="isAudioAllPlaying() || isAudioPlaying()"
+              [pTooltip]="isAudioAllPlaying() ? 'Audio is playing...' : 'Play entire chapter audio'"
+              [tooltipDisabled]="isAudioPlaying()"
+              tooltipPosition="bottom"
+              tooltipStyleClass="text-xs"
+              class="shadow-sm pi cursor-pointer w-8 h-8 rounded-full disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-600)]"
+              [ngClass]="{
+                'animate-pulse pi-volume-up text-yellow-700 dark:text-yellow-200 font-semibold':
+                  isAudioAllPlaying(),
+                'pi-volume-off !text-sm': !isAudioAllPlaying(),
+              }"
+            ></button>
+          </div>
         </div>
       }
 
