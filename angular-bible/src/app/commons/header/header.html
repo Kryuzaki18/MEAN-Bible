@@ -1,7 +1,7 @@
 <div
   class="bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
 >
-  <header class="header-container flex items-center max-w-[1440px] mx-auto px-2">
+  <header class="header-container flex items-center max-w-[1440px] mx-auto">
     <div class="flex items-center justify-between w-full">
       <p-button
         icon="pi pi-bars"
@@ -11,37 +11,159 @@
         severity="secondary"
       />
 
-      <button
-        class="cursor-pointer flex items-center gap-2 px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] disabled:cursor-not-allowed"
-        (click)="show()"
-        [disabled]="bookmarks().length === 0"
-      >
-        <span
-          class="pi text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
-          [ngClass]="{
-            'pi-bookmark-fill': bookmarks().length > 0,
-            'pi-bookmark': bookmarks().length === 0,
-          }"
-        ></span>
-        <span class="text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
-          >Bookmarks</span
+      <div class="max-lg:hidden flex-[0_0_250px] px-2">
+        <button
+          class="cursor-pointer flex items-center gap-2 px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] disabled:cursor-not-allowed"
+          (click)="show()"
+          [disabled]="bookmarks().length === 0"
         >
-        @if (bookmarks().length > 0) {
           <span
-            class="bg-[var(--p-primary-500)] text-[var(--p-primary-50)] dark:bg-[var(--p-primary-200)] dark:text-[var(--p-primary-800)] rounded py-0.5 px-1.5 text-xs font-semibold"
+            class="pi text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+            [ngClass]="{
+              'pi-bookmark-fill': bookmarks().length > 0,
+              'pi-bookmark': bookmarks().length === 0,
+            }"
+          ></span>
+          <span
+            class="text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold text-xs"
+            >Bookmarks</span
           >
-            {{ bookmarks().length }}
-          </span>
-        }
-      </button>
+          @if (bookmarks().length > 0) {
+            <span
+              class="bg-[var(--p-primary-500)] text-[var(--p-primary-50)] dark:bg-[var(--p-primary-200)] dark:text-[var(--p-primary-800)] rounded py-0.5 px-1.5 text-xs font-semibold"
+            >
+              {{ bookmarks().length }}
+            </span>
+          }
+        </button>
+      </div>
 
-      <button class="cursor-pointer p-2" (click)="appSettingsService.toggleDarkMode()">
-        <span
-          class="pi text-lg text-[var(--p-primary-800)] dark:text-[var(--p-primary-100)]"
-          [class.pi-moon]="appSettingsService.isDarkMode()"
-          [class.pi-sun]="!appSettingsService.isDarkMode()"
-        ></span>
-      </button>
+      <div class="flex items-center justify-center gap-2 w-full">
+        <div
+          class="flex items-center gap-3 dark:text-[var(--p-primary-100)] text-[var(--p-primary-600)] cursor-pointer max-lg:text-sm"
+          pTooltip="What is this book about?"
+          tooltipPosition="bottom"
+          tooltipStyleClass="text-xs"
+          (click)="bookInfoPopover.toggle($event)"
+        >
+          <span class="pi pi-info-circle !text-lg"></span>
+          <span class="uppercase font-semibold">{{ book()?.name }}</span>
+        </div>
+        <span class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)]">
+          Chapter {{ chapter() }}
+        </span>
+      </div>
+
+      <p-popover #bookInfoPopover [dismissable]="true">
+        <div class="w-100 max-md:w-full">
+          {{ book()?.description }}
+        </div>
+        <button
+          type="button"
+          pButton
+          (click)="bookInfoPopover.hide()"
+          label="Close"
+          class="w-full dark:!bg-[var(--p-primary-600)] dark:!text-[var(--p-primary-100)] dark:hover:!bg-[var(--p-primary-500)] !border-none mt-3 !text-sm"
+        ></button>
+      </p-popover>
+
+      <button
+        type="button"
+        class="cursor-pointer p-2 pi pi-cog max-lg:px-3 text-[var(--p-primary-700)] dark:text-[var(--p-primary-100)]"
+        (click)="settingsPopover.toggle($event)"
+      ></button>
+
+      <p-popover
+        #settingsPopover
+        styleClass="w-[150px] text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+      >
+        <div
+          class="flex items-center w-full mb-1.5 pb-1 border-b border-[var(--p-primary-50)] dark:border-[var(--p-primary-700)]"
+        >
+          <span class="text-sm font-semibold">Settings</span>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-col gap-1">
+            <span class="text-[10px]">Theme</span>
+            <button
+              class="cursor-pointer flex items-center justify-center gap-1 px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+              (click)="appSettingsService.toggleDarkMode()"
+            >
+              <span
+                class="pi !text-[10px]"
+                [class.pi-moon]="appSettingsService.isDarkMode()"
+                [class.pi-sun]="!appSettingsService.isDarkMode()"
+              ></span>
+
+              <span class="text-xs w-[35px] h-[20px] flex items-center px-1">{{
+                appSettingsService.isDarkMode() ? 'Dark' : 'Light'
+              }}</span>
+            </button>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <span class="text-[10px]">Export</span>
+
+            <div class="flex flex-col gap-1">
+              <button
+                type="button"
+                (click)="exportToWord()"
+                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+              >
+                <span class="pi pi-file-word !text-[10px]"></span>
+                <span class="text-xs w-[35px] h-[20px] flex items-center px-1">Word</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="exportToPDF()"
+                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+              >
+                <span class="pi pi-file-pdf !text-[10px]"></span>
+                <span class="text-xs w-[35px] h-[20px] flex items-center px-1">PDF</span>
+              </button>
+
+              <button
+                type="button"
+                (click)="exportToExcel()"
+                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+              >
+                <span class="pi pi-file-excel !text-[10px]"></span>
+                <span class="text-xs w-[35px] h-[20px] flex items-center px-1">Excel</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1 min-lg:hidden">
+            <span class="text-[10px]">My Bookmarks</span>
+
+            <button
+              class="cursor-pointer flex items-center justify-between px-2 py-2 rounded hover:shadow-md disabled:cursor-not-allowed bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+              (click)="show()"
+              [disabled]="bookmarks().length === 0"
+            >
+              <span
+                class="pi text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+                [ngClass]="{
+                  'pi-bookmark-fill': bookmarks().length > 0,
+                  'pi-bookmark': bookmarks().length === 0,
+                }"
+              ></span>
+              <span class="text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] text-xs"
+                >Bookmarks</span
+              >
+              @if (bookmarks().length > 0) {
+                <span
+                  class="bg-[var(--p-primary-500)] text-[var(--p-primary-50)] dark:bg-[var(--p-primary-200)] dark:text-[var(--p-primary-800)] rounded py-0.5 px-1.5 text-xs font-semibold"
+                >
+                  {{ bookmarks().length }}
+                </span>
+              }
+            </button>
+          </div>
+        </div>
+      </p-popover>
     </div>
   </header>
 </div>

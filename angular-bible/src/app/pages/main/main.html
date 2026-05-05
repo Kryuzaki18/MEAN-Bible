@@ -1,4 +1,4 @@
-<app-header></app-header>
+<app-header [book]="paramsBook()" [chapter]="paramsChapter()" [verses]="verses()"></app-header>
 
 <p-drawer
   [visible]="appSettings.isSidebarVisible()"
@@ -19,7 +19,7 @@
 </p-drawer>
 
 <main
-  class="flex justify-center max-w-[1440px] mx-auto 2xl:border-x border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
+  class="flex justify-center max-w-[1440px] mx-auto 2xl:border-x border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)] relative"
 >
   <div class="hidden lg:block bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-800)]">
     <app-sidebar [allBooks]="allBooks()"></app-sidebar>
@@ -29,7 +29,7 @@
     <div class="relative">
       @if (isSubHeaderVisible()) {
         <div
-          class="filters-container flex items-center justify-between gap-1 px-2 max-md:pt-2 min-lg:px-30 dark:bg-[var(--p-primary-900)]"
+          class="filters-container flex items-center justify-between gap-1 min-lg:px-30 dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
         >
           <button
             class="flex items-center justify-center gap-2 h-[40px] max-lg:w-[40px] px-2 rounded cursor-pointer disabled:text-stone-300 disabled:dark:text-stone-600 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] font-semibold"
@@ -84,109 +84,32 @@
             <span class="pi pi-chevron-right"></span>
           </button>
         </div>
-
-        <div
-          class="book-chapter-container flex items-end pb-1.5 justify-between min-lg:px-30 dark:bg-[var(--p-primary-900)] border-b border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)]"
-        >
-          <div class="flex flex-col gap-1 items-center w-[120px] max-lg:px-2">
-            <span
-              class="w-full text-center text-[11px] border-b border-dashed border-[var(--p-primary-100)] dark:border-[var(--p-primary-700)] text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
-              >Export</span
-            >
-            <div class="flex gap-2">
-              <button
-                type="button"
-                (click)="exportToWord()"
-                [pTooltip]="'Export to word'"
-                tooltipPosition="bottom"
-                tooltipStyleClass="text-xs"
-                class="flex flex-col items-center justify-center cursor-pointer w-8 h-8 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
-              >
-                <span class="pi pi-file-word !text-sm"></span>
-                <span class="text-[10px]">Word</span>
-              </button>
-
-              <button
-                type="button"
-                (click)="exportToPDF()"
-                [pTooltip]="'Export to PDF'"
-                tooltipPosition="bottom"
-                tooltipStyleClass="text-xs"
-                class="flex flex-col items-center justify-center cursor-pointer w-8 h-8 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
-              >
-                <span class="pi pi-file-pdf !text-sm"></span>
-                <span class="text-[10px]">PDF</span>
-              </button>
-
-              <button
-                type="button"
-                (click)="exportToExcel()"
-                [pTooltip]="'Export to excel'"
-                tooltipPosition="bottom"
-                tooltipStyleClass="text-xs"
-                class="flex flex-col items-center justify-center cursor-pointer w-8 h-8 disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
-              >
-                <span class="pi pi-file-excel !text-sm"></span>
-                <span class="text-[10px]">Excel</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="flex flex-col items-center justify-center">
-            <div
-              class="flex items-center gap-1 px-3 py-1 bg-[var(--p-primary-600)] text-[var(--p-primary-100)] dark:bg-[var(--p-primary-100)] dark:text-[var(--p-primary-600)] rounded cursor-pointer"
-              (click)="op.toggle($event)"
-              pTooltip="What is this book about?"
-              tooltipPosition="bottom"
-              tooltipStyleClass="text-xs"
-            >
-              <span class="pi pi-info-circle"></span>
-              <span class="uppercase text-sm lg:text-lg font-semibold">{{
-                paramsBook()?.name
-              }}</span>
-            </div>
-            <div class="mt-1">
-              <span
-                class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-3xl lg:text-4xl"
-              >
-                {{ paramsChapter() || 1 }}
-              </span>
-            </div>
-            <div>
-              <span
-                class="text-[var(--p-primary-600)] dark:text-[var(--p-primary-100)] text-md lg:text-lg"
-              >
-                Chapter
-              </span>
-            </div>
-          </div>
-
-          <div class="max-lg:px-2 w-[120px] flex items-end justify-end">
-            <button
-              type="button"
-              (click)="audio()"
-              [disabled]="isAudioAllPlaying() || isAudioPlaying()"
-              [pTooltip]="isAudioAllPlaying() ? 'Audio is playing...' : 'Play entire chapter audio'"
-              [tooltipDisabled]="isAudioPlaying()"
-              tooltipPosition="bottom"
-              tooltipStyleClass="text-xs"
-              class="shadow-sm pi cursor-pointer w-8 h-8 rounded-full disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-600)]"
-              [ngClass]="{
-                'animate-pulse pi-volume-up text-yellow-700 dark:text-yellow-200 font-semibold':
-                  isAudioAllPlaying(),
-                'pi-volume-off !text-sm': !isAudioAllPlaying(),
-              }"
-            ></button>
-          </div>
-        </div>
       }
 
+      <div class="absolute right-0 mr-2 min-lg:mr-30 bottom-0 mx-auto -mb-3 z-10">
+        <button
+          type="button"
+          (click)="audio()"
+          [disabled]="isAudioAllPlaying() || isAudioPlaying()"
+          [pTooltip]="isAudioAllPlaying() ? 'Audio is playing...' : 'Play entire chapter audio'"
+          [tooltipDisabled]="isAudioPlaying()"
+          tooltipPosition="bottom"
+          tooltipStyleClass="text-xs"
+          class="shadow-sm pi cursor-pointer w-7 h-7 rounded-full disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-600)] border border-[var(--p-primary-200)] dark:border-[var(--p-primary-500)] dark:border-none"
+          [ngClass]="{
+            'animate-pulse pi-volume-up text-yellow-700 dark:text-yellow-200 font-semibold':
+              isAudioAllPlaying(),
+            'pi-volume-off !text-sm': !isAudioAllPlaying(),
+          }"
+        ></button>
+      </div>
+
       <div
-        class="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer z-10 absolute right-0 mr-15 bottom-0 mx-auto -mb-3 bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-800)] border border-[var(--p-primary-200)] dark:border-[var(--p-primary-500)]"
+        class="shadow-sm cursor-pointer w-5 h-5 rounded-full flex items-center justify-center z-10 absolute right-0 left-0 bottom-0 mx-auto -mb-2 bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-600)] border border-[var(--p-primary-200)] dark:border-[var(--p-primary-500)] dark:border-none"
         (click)="toggleSubHeader()"
       >
         <span
-          class="pi !text-sm text-[var(--p-primary-300)] dark:text-[var(--p-primary-100)] animate-bounce"
+          class="pi !text-xs text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
           [ngClass]="{
             'pi-angle-double-up': isSubHeaderVisible(),
             'pi-angle-double-down': !isSubHeaderVisible(),
@@ -194,12 +117,6 @@
         ></span>
       </div>
     </div>
-
-    <p-popover #op [dismissable]="true">
-      <div class="w-100 max-md:w-full">
-        {{ paramsBook()?.description }}
-      </div>
-    </p-popover>
 
     <p-scrollpanel
       class="verses-container dark:bg-[var(--p-primary-950)] pb-3"

@@ -14,13 +14,9 @@
   height: $filters-container-height;
 }
 
-.book-chapter-container {
-  height: $book-chapter-container-height;
-}
-
 .verses-container {
   height: calc(
-    100dvh - #{$header-height} - #{$filters-container-height} - #{$book-chapter-container-height}
+    100dvh - #{$header-height} - #{$filters-container-height} 
   );
 }
 
