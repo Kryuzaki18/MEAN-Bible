@@ -87,7 +87,7 @@
           <div class="flex flex-col gap-1">
             <span class="text-[10px]">Theme</span>
             <button
-              class="cursor-pointer flex items-center justify-center gap-1 px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+              class="cursor-pointer flex items-center justify-center gap-1 px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
               (click)="appSettingsService.toggleDarkMode()"
             >
               <span
@@ -96,7 +96,7 @@
                 [class.pi-sun]="!appSettingsService.isDarkMode()"
               ></span>
 
-              <span class="text-xs w-[35px] h-[20px] flex items-center px-1">{{
+              <span class="text-xs w-[35px] flex items-center px-1">{{
                 appSettingsService.isDarkMode() ? 'Dark' : 'Light'
               }}</span>
             </button>
@@ -109,57 +109,48 @@
               <button
                 type="button"
                 (click)="exportToWord()"
-                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
               >
                 <span class="pi pi-file-word !text-[10px]"></span>
-                <span class="text-xs w-[35px] h-[20px] flex items-center px-1">Word</span>
+                <span class="text-xs w-[35px] flex items-center px-1">Word</span>
               </button>
 
               <button
                 type="button"
                 (click)="exportToPDF()"
-                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
               >
                 <span class="pi pi-file-pdf !text-[10px]"></span>
-                <span class="text-xs w-[35px] h-[20px] flex items-center px-1">PDF</span>
+                <span class="text-xs w-[35px] flex items-center px-1">PDF</span>
               </button>
 
               <button
                 type="button"
                 (click)="exportToExcel()"
-                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+                class="flex items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded hover:shadow-md bg-[var(--p-primary-50)] text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
               >
                 <span class="pi pi-file-excel !text-[10px]"></span>
-                <span class="text-xs w-[35px] h-[20px] flex items-center px-1">Excel</span>
+                <span class="text-xs w-[35px] flex items-center px-1">Excel</span>
               </button>
             </div>
           </div>
 
           <div class="flex flex-col gap-1 min-lg:hidden">
-            <span class="text-[10px]">My Bookmarks</span>
+            <span class="text-[10px]">My Bookmarks ({{ bookmarks().length }})</span>
 
             <button
-              class="cursor-pointer flex items-center justify-between px-2 py-2 rounded hover:shadow-md disabled:cursor-not-allowed bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
+              class="cursor-pointer flex items-center justify-center gap-1 px-2 py-2 rounded hover:shadow-md disabled:cursor-not-allowed text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] bg-[var(--p-primary-50)] dark:bg-[var(--p-primary-700)] border border-[var(--p-primary-300)] dark:border-[var(--p-primary-600)] dark:hover:bg-[var(--p-primary-600)]"
               (click)="show()"
               [disabled]="bookmarks().length === 0"
             >
               <span
-                class="pi text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)]"
+                class="pi !text-[10px]"
                 [ngClass]="{
                   'pi-bookmark-fill': bookmarks().length > 0,
                   'pi-bookmark': bookmarks().length === 0,
                 }"
               ></span>
-              <span class="text-[var(--p-primary-500)] dark:text-[var(--p-primary-100)] text-xs"
-                >Bookmarks</span
-              >
-              @if (bookmarks().length > 0) {
-                <span
-                  class="bg-[var(--p-primary-500)] text-[var(--p-primary-50)] dark:bg-[var(--p-primary-200)] dark:text-[var(--p-primary-800)] rounded py-0.5 px-1.5 text-xs font-semibold"
-                >
-                  {{ bookmarks().length }}
-                </span>
-              }
+              <span class="text-xs">Bookmarks</span>
             </button>
           </div>
         </div>
