@@ -121,7 +121,7 @@
     <p-scrollpanel
       class="verses-container dark:bg-[var(--p-primary-950)] pb-3"
       [ngClass]="{
-        '!h-full': !isSubHeaderVisible(),
+        'filter-hidden': !isSubHeaderVisible(),
       }"
     >
       @if (isLoading()) {

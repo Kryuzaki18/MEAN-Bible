@@ -16,8 +16,12 @@
 
 .verses-container {
   height: calc(
-    100dvh - #{$header-height} - #{$filters-container-height} 
+    100dvh - #{$header-height} - #{$filters-container-height}
   );
+
+  &.filter-hidden {
+    height: calc(100dvh - #{$header-height});
+  }
 }
 
 :host ::ng-deep .p-drawer {
